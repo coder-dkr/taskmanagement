@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/entities';
+const API_BASE_URL = '/api/entities';
 
 const entityService = {
     // Get manager for entity

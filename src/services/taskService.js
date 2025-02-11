@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import entityService from './entityService';
 
-const API_URL = 'http://localhost:8080/tasks';
+const API_URL = '/api/tasks';
 
 const axiosInstance = axios.create({
     baseURL: API_URL,

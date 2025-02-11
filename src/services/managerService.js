@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080/managers';
+const BASE_URL = '/api/managers';
 
 const managerService = {
     getAllManagers: async () => {

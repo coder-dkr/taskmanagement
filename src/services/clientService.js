@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/clients';
+const API_URL = '/api/clients';
 
 export const clientService = {
     getByFilters: async (page, searchText = '') => {
