@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = '/api/clients';
 
 export const clientService = {
-    getByFilters: async (page, searchText = '') => {
+    getByFilters: async (page : any, searchText = '') => {
         try {
             const response = await axios.get(`${API_URL}/filter`, {
                 params: { page, searchText },
@@ -30,7 +30,7 @@ export const clientService = {
     },
 
     // Get client by ID
-    getClientById: async (id) => {
+    getClientById: async (id : any) => {
         try {
             const response = await axios.get(`${API_URL}/${id}`);
             return response.data;
@@ -52,7 +52,7 @@ export const clientService = {
     },
 
     // Create a new client
-    createClient: async (clientData) => {
+    createClient: async (clientData : any) => {
         try {
             const response = await axios.post(API_URL, clientData, {
                 headers: { 'Content-Type': 'application/json' },
@@ -65,7 +65,7 @@ export const clientService = {
     },
 
     // Update an existing client by ID
-    updateClient: async (id, clientData) => {
+    updateClient: async (id : any, clientData : any) => {
         try {
             const response = await axios.put(`${API_URL}/${id}`, clientData, {
                 headers: { 'Content-Type': 'application/json' },
@@ -78,12 +78,12 @@ export const clientService = {
     },
 
     // Delete a client by ID
-    deleteClient: async (id) => {
+    deleteClient: async (id : any) => {
         try {
             await axios.delete(`${API_URL}/${id}`);
         } catch (error) {
             console.error(`Error deleting client with ID ${id}:`, error);
-            const errorMessage = error.response?.data?.message || 'Failed to delete client.';
+            const errorMessage = (error as any)?.response?.data?.message || 'Failed to delete client.';
             throw new Error(errorMessage);
         }
     },

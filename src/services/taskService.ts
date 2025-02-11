@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast } from '@/hooks/useToast'
 import entityService from './entityService';
 
 const API_URL = '/api/tasks';
@@ -45,7 +45,11 @@ axiosInstance.interceptors.response.use(
             errorMessage = 'No response from server. Please check your connection.';
         }
 
-        toast.error(errorMessage);
+
+        toast({
+            title: "Error",
+            description:errorMessage,
+          });
         return Promise.reject(new Error(errorMessage));
     }
 );
@@ -62,7 +66,7 @@ const taskService = {
         }
     },
 
-    createTasksFromTemplates: async (entityId, data) => {
+    createTasksFromTemplates: async (entityId:any, data:any) => {
         try {
             if (!data.selectedTasks || !Array.isArray(data.selectedTasks)) {
                 throw new Error('Invalid selectedTasks format');
@@ -72,7 +76,7 @@ const taskService = {
 
             const formattedData = {
                 managerId: manager.id,
-                selectedTasks: data.selectedTasks.map(task => ({
+                selectedTasks: data.selectedTasks.map((task:any) => ({
                     taskTemplateId: Number(task.taskTemplateId),
                     dueDate: task.dueDate
                 }))
@@ -85,7 +89,10 @@ const taskService = {
                 formattedData
             );
 
-            toast.success('Tasks created successfully from templates');
+            toast({
+                title: "Success",
+                description:'Tasks created successfully from templates',
+              });
             return response.data;
         } catch (error) {
             console.error('Error creating tasks from templates:', error);
@@ -102,7 +109,7 @@ const taskService = {
            throw error;
        }
       },
-    getTaskById: async (taskId) => {
+    getTaskById: async (taskId:any) => {
         try {
             const response = await axiosInstance.get(`/${taskId}`);
             return response.data;
@@ -112,7 +119,7 @@ const taskService = {
         }
     },
 
-    getTasksByEntity: async (entityId) => {
+    getTasksByEntity: async (entityId:any) => {
         try {
             const response = await axiosInstance.get(`/entity/${entityId}`);
             return response.data;
@@ -122,11 +129,14 @@ const taskService = {
         }
     },
 
-    createTask: async (taskData) => {
+    createTask: async (taskData:any) => {
     console.log("Sending task data:", taskData);
         try {
             const response = await axiosInstance.post('', taskData);
-            toast.success('Task created successfully');
+            toast({
+                title: "success",
+                description:'Task created successfully',
+              });
             return response.data;
         } catch (error) {
             console.error('Error creating task:', error);
@@ -134,7 +144,7 @@ const taskService = {
         }
     },
 
-    updateTask: async (taskId, taskData) => {
+    updateTask: async (taskId:any, taskData:any) => {
         try {
             // Create a proper task update object with all fields
             const updatePayload = {
@@ -163,15 +173,21 @@ const taskService = {
             return response.data;
         } catch (error) {
             console.error(`Error updating task ${taskId}:`, error);
-            toast.error('Failed to update task');
+            toast({
+                title: "Error",
+                description:'Failed to update task',
+              });
             throw error;
         }
     },
 
-    deleteTask: async (taskId) => {
+    deleteTask: async (taskId : any) => {
         try {
             await axiosInstance.delete(`/${taskId}`);
-            toast.success('Task deleted successfully');
+            toast({
+                title: "success",
+                description:'Task deleted successfully',
+              });
         } catch (error) {
             console.error(`Error deleting task ${taskId}:`, error);
             throw error;
@@ -187,10 +203,13 @@ const taskService = {
         }
     },
 
-    updateTaskStatus: async (taskId, status) => {
+    updateTaskStatus: async (taskId :any, status:any) => {
         try {
             const response = await axiosInstance.patch(`/${taskId}/status`, { status });
-            toast.success('Task status updated successfully');
+            toast({
+                title: "success",
+                description:'Task status updated successfully',
+              });
             return response.data;
         } catch (error) {
             console.error(`Error updating status for task ${taskId}:`, error);
@@ -218,7 +237,7 @@ const taskService = {
         }
     },
 
-    getTasksByStatus: async (status) => {
+    getTasksByStatus: async (status:any) => {
         try {
             const response = await axiosInstance.get(`/status/${status}`);
             return response.data;
@@ -228,7 +247,7 @@ const taskService = {
         }
     },
 
-    getTasksByDate: async (date) => {
+    getTasksByDate: async (date:any) => {
         try {
             const response = await axiosInstance.get(`/due-date/${date}`);
             return response.data;
@@ -238,7 +257,7 @@ const taskService = {
         }
     },
 
-    getTasksByDateRange: async (endDate) => {
+    getTasksByDateRange: async (endDate:any) => {
         try {
             const startDate = new Date().toISOString().split('T')[0];
             const response = await axiosInstance.get('/date-range', {
@@ -254,7 +273,7 @@ const taskService = {
         }
     },
 
-    searchTasks: async (searchTerm) => {
+    searchTasks: async (searchTerm:any) => {
         try {
             const response = await axiosInstance.get('/search', {
                 params: { query: searchTerm }
@@ -265,7 +284,7 @@ const taskService = {
             throw error;
         }
     },
-      getTasksBetweenDates: async (startDate, endDate) => {
+      getTasksBetweenDates: async (startDate:any, endDate:any) => {
         try {
           const response = await fetch(`/tasks/date-range?startDate=${startDate}&endDate=${endDate}`);
           if (!response.ok) throw new Error('Failed to fetch tasks');
@@ -276,7 +295,7 @@ const taskService = {
 
     },
 
-    getTasksByManager: async (managerId) => {
+    getTasksByManager: async (managerId:any) => {
         try {
             const response = await axiosInstance.get(`/manager/${managerId}`);
             return response.data;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast } from '@/hooks/useToast';
 
 const API_URL = '/api/tasks';
 
@@ -42,8 +42,10 @@ axiosInstance.interceptors.response.use(
         } else if (error.request) {
             errorMessage = 'No response from server. Please check your connection.';
         }
-
-        toast.error(errorMessage);
+        toast({
+            title: "Error",
+            description:errorMessage,
+          });
         return Promise.reject(new Error(errorMessage));
     }
 );
@@ -59,7 +61,7 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByEntity: async (entityId) => {
+    getProvisionTasksByEntity: async (entityId : any) => {
         try {
             const response = await axiosInstance.get(`/provision/entity/${entityId}`);
             return response.data;
@@ -69,7 +71,7 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByClient: async (clientId) => {
+    getProvisionTasksByClient: async (clientId: any) => {
         try {
             const response = await axiosInstance.get(`/provision/client/${clientId}`);
             return response.data;
@@ -79,7 +81,7 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByManager: async (managerId) => {
+    getProvisionTasksByManager: async (managerId: any) => {
         try {
             const response = await axiosInstance.get(`/provision/manager/${managerId}`);
             return response.data;
@@ -89,7 +91,7 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByStatus: async (status) => {
+    getProvisionTasksByStatus: async (status: any) => {
         try {
             const response = await axiosInstance.get(`/provision/status/${status}`);
             return response.data;
@@ -99,7 +101,7 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksBetweenDates: async (startDate, endDate) => {
+    getProvisionTasksBetweenDates: async (startDate: any, endDate: any) => {
         try {
             const response = await axiosInstance.get('/provision/dates', {
                 params: {
@@ -114,7 +116,7 @@ const provisionService = {
         }
     },
 
-    hasProvisionTasks: async (entityId) => {
+    hasProvisionTasks: async (entityId: any) => {
         try {
             const response = await axiosInstance.get(`/provision/check/${entityId}`);
             return response.data;
@@ -125,7 +127,7 @@ const provisionService = {
     },
 
     // Reuse the task update and delete methods from the original service
-    updateTask: async (taskId, taskData) => {
+    updateTask: async (taskId: any, taskData: any) => {
         try {
             const updatePayload = {
                 id: taskId,
@@ -151,15 +153,21 @@ const provisionService = {
             return response.data;
         } catch (error) {
             console.error(`Error updating provision task ${taskId}:`, error);
-            toast.error('Failed to update provision task');
+            toast({
+                title: "Error",
+                description:'Failed to update provision task',
+              });
             throw error;
         }
     },
 
-    updateTaskStatus: async (taskId, status) => {
+    updateTaskStatus: async (taskId: any, status: any) => {
         try {
             const response = await axiosInstance.patch(`/provision/${taskId}/status`, { status });
-            toast.success('Provision task status updated successfully');
+            toast({
+                title: "success",
+                description:'Provision task status updated successfully',
+              });
             return response.data;
         } catch (error) {
             console.error(`Error updating status for provision task ${taskId}:`, error);

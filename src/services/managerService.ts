@@ -14,7 +14,7 @@ const managerService = {
         }
     },
 
-    createManager: async (managerData) => {
+    createManager: async (managerData: any) => {
         try {
             const response = await fetch(BASE_URL, {
                 method: 'POST',
@@ -33,7 +33,7 @@ const managerService = {
         }
     },
 
-    updateManager: async (id, managerData) => {
+    updateManager: async (id: any, managerData: any) => {
         try {
             const response = await fetch(`${BASE_URL}/${id}`, {
                 method: 'PUT',
@@ -52,7 +52,7 @@ const managerService = {
         }
     },
 
-    deleteManager: async (id) => {
+    deleteManager: async (id: any) => {
         try {
             const response = await fetch(`${BASE_URL}/${id}`, {
                 method: 'DELETE',
@@ -66,7 +66,7 @@ const managerService = {
         }
     },
 
-    getManagerById: async (id) => {
+    getManagerById: async (id: any) => {
         try {
             const response = await fetch(`${BASE_URL}/${id}`);
             if (!response.ok) {
@@ -101,7 +101,7 @@ const managerService = {
             console.log('Received filtered managers:', data);
             return data;
         } catch (error) {
-            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            if ((error as any)?.name === 'TypeError' && (error as any)?.message.includes('Failed to fetch')) {
                 console.error('Network error - Is the server running?');
                 throw new Error('Unable to connect to the server. Please check if it is running.');
             }

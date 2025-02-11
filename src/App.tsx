@@ -2,15 +2,12 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Dashboard from "@/pages/dashboard";
-import Clients from "@/pages/clients";
-import Tasks from "@/pages/tasks";
-import NotFound from "@/pages/not-found";
 import { Navigation } from "@/components/Navigation";
 import { TopBar } from "@/components/TopBar";
 import Joyride from 'react-joyride';
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { TaskProvider } from "@/contexts/TaskContext";
+import {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions} from '@/pages'
 
 
 function Router() {
@@ -41,21 +38,12 @@ function Router() {
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/clients" component={Clients} />
-            <Route path="/entities">
-              <div className="p-8 text-lg font-semibold text-gray-700 dark:text-gray-200">Entities Page</div>
-            </Route>
-            <Route path="/managers">
-              <div className="p-8 text-lg font-semibold text-gray-700 dark:text-gray-200">Managers Page</div>
-            </Route>
-            <Route path="/tasks">
-            <div className="p-8 text-lg font-semibold text-gray-700 dark:text-gray-200">Monday View Page</div></Route>
-            <Route path="/monday-view"  component={Tasks}>
-              <div className="p-8 text-lg font-semibold text-gray-700 dark:text-gray-200">Monday View Page</div>
-            </Route>
-            <Route path="/provisions">
-              <div className="p-8 text-lg font-semibold text-gray-700 dark:text-gray-200">Provisions Page</div>
-            </Route>
-            <Route component={NotFound} />
+            <Route path="/entities" component={entities} />
+            <Route path="/managers" component={managers}/>
+            <Route path="/tasks" component={Tasks}/>
+            <Route path="/monday-view"  component={MondayView} />
+            <Route path="/provisions" component={provisions} />
+            <Route component={NotFound}/>
           </Switch>
         </div>
       </div>

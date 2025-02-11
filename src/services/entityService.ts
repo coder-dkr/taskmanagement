@@ -4,7 +4,7 @@ const API_BASE_URL = '/api/entities';
 
 const entityService = {
     // Get manager for entity
-    getManagerForEntity: async (entityId) => {
+    getManagerForEntity: async (entityId : any) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/${entityId}/manager`);
             return response.data;
@@ -26,7 +26,7 @@ const entityService = {
     },
 
     // Fetch entities for a specific client
-    getByClientId: async (clientId) => {
+    getByClientId: async (clientId: any)  => {
         try {
         const response = await axios.get(`${API_BASE_URL}/client/${clientId}/list`);
         console.log(`Response for client ${clientId}:`, response.data);
@@ -39,7 +39,7 @@ const entityService = {
     },
 
     // Fetch a specific entity by ID
-    getById: async (entityId) => {
+    getById: async (entityId: any) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/${entityId}`);
             return response.data;
@@ -50,7 +50,7 @@ const entityService = {
     },
 
     // Create a new entity
-    createEntity: async (entityData) => {
+    createEntity: async (entityData: any) => {
         try {
             const response = await axios.post(API_BASE_URL, entityData);
             return response.data;
@@ -61,7 +61,7 @@ const entityService = {
     },
 
     // Update an existing entity
-    updateEntity: async (entityId, entityData) => {
+    updateEntity: async (entityId: any, entityData: any) => {
         try {
             const response = await axios.put(`${API_BASE_URL}/${entityId}`, entityData);
             return response.data;
@@ -72,7 +72,7 @@ const entityService = {
     },
 
     // Delete an entity
-    deleteEntity: async (entityId) => {
+    deleteEntity: async (entityId: any) => {
         try {
             const response = await axios.delete(`${API_BASE_URL}/${entityId}`);
             return response.data;
