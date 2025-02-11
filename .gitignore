@@ -1,0 +1,78 @@
+# Dependency directories
+node_modules/
+
+# Build files
+dist/
+build/
+*.js.map
+*.css.map
+
+# Local development files
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cache
+.cache/
+.cache-loader/
+.vscode-test/
+
+# Testing
+coverage/
+.nyc_output/
+cypress/screenshots/
+cypress/videos/
+*.log
+
+# Vue CLI specific
+.vuepress/dist/
+.vuepress/cache/
+
+# Vite specific
+.vite/
+.vitepress/dist/
+
+# ESLint/Prettier
+.eslintcache
+.prettierignore
+
+# Optional (uncomment if needed)
+# package-lock.json  # Only if not using lockfiles
+# yarn.lock         # Only if not using lockfiles
+# pnpm-lock.yaml    # Only if not using lockfiles
+
+# Local Netlify folder
+.netlify
+
+# Editor config
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.tmp
+*.temp
+
+# Debug files
+debug.*
+*.log
+
+# Build tool caches
+.terser_cache
+.parcel-cache/
