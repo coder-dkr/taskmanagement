@@ -236,7 +236,7 @@ const EntityList = () => {
             <table className={`w-full table-auto ${clientId ? 'client-entities' : 'all-entities'}`}>
                 <thead>
                     <tr className="dark:bg-gray-600 dark:text-white">
-                        {!clientId && <th className="px-4 py-2 text-left bg-transparent dark:text-white">Client</th>}
+                        {!clientId && <th className="px-4 py-2 text-left bg-transparent dark:text-white text-black">Client</th>}
                         <th className="px-4 py-2 text-left bg-transparent dark:text-white  text-black">Entity Name</th>
                         <th className="px-4 py-2 text-left bg-transparent dark:text-white text-black">Status</th>
                         <th className="px-4 py-2 text-left  bg-transparent dark:text-white text-black">Senior Manager</th>
@@ -256,7 +256,7 @@ const EntityList = () => {
                     (
                         entities.map((entity) => (
                             <tr key={entity.id} className="border-b">
-                                {!clientId && <td className="px-4 py-2">{entity.clientName}</td>}
+                                {!clientId && <td className="text-black dark:text-white px-4 py-2">{entity.clientName}</td>}
                                 <td className="px-4 py-2">
                                     <span
                                         onClick={() => handleEntityClick(entity.id)}

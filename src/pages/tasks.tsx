@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import taskService from '@/services/taskService';
 import managerService from '@/services/managerService';
-import './TaskDashboard.css';
+
 
 const TaskDashboard = () => {
  const [tasks, setTasks] = useState([]);
@@ -166,7 +166,8 @@ const fetchTaskTemplates = async () => {
       >
         Pending Tasks
       </button>
-
+        <div className="flex items-center space-x-4">
+          <label>Due before</label>
       <input
         type="date"
         value={selectedDate}
@@ -174,6 +175,7 @@ const fetchTaskTemplates = async () => {
         className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring focus:border-blue-500"
         placeholder="Select due date"
       />
+      </div>
     </div>
 
     <select
@@ -236,12 +238,12 @@ const fetchTaskTemplates = async () => {
             tasks.map((task) => (
               <tr key={task.id}>
                 <td className="px-6 py-4 whitespace-normal">
-                  <div className="font-semibold">{task.name}</div>
-                  <div>{task.description}</div>
+                  <div className="text-black dark:text-white font-semibold">{task.name}</div>
+                  <div className="text-black dark:text-white"> {task.description} </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="text-black dark:text-white px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    className={`text-black dark:text-white px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       task.taskStatus?.toLowerCase() === 'completed'
                         ? 'bg-green-100 text-green-800'
                         : task.taskStatus?.toLowerCase() === 'pending'
@@ -254,7 +256,7 @@ const fetchTaskTemplates = async () => {
                     {task.taskStatus}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className=" text-black dark:text-white px-6 py-4 whitespace-nowrap">
                   {task.dueDate
                     ? new Date(task.dueDate).toLocaleDateString('en-US', {
                         year: 'numeric',

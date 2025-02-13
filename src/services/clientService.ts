@@ -1,19 +1,30 @@
 import axios from 'axios';
 
-const API_URL = '/api/clients';
+const API_URL = 'http://localhost:8080/api/clients';
 
 export const clientService = {
-    getByFilters: async (page : any, searchText = '') => {
+    getByFilters: async (page: number, searchText = '') => {
+        console.log('Making request with params:', { page, searchText });
         try {
             const response = await axios.get(`${API_URL}/filter`, {
-                params: { page, searchText },
+                params: { 
+                    page, 
+                    searchText 
+                }
             });
-            return {
-                clients: response.data.clients,
-                totalPages: response.data.totalPages,
-            };
+            console.log('Response:', response.data);
+            return response.data;
         } catch (error) {
-            console.error('Error fetching clients with filters:', error);
+            if (axios.isAxiosError(error)) {
+                if (error.code === 'ERR_NETWORK') {
+                    console.error('Network error - Is the backend running?');
+                }
+                console.error('Error details:', {
+                    status: error.response?.status,
+                    data: error.response?.data,
+                    headers: error.response?.headers
+                });
+            }
             throw error;
         }
     },
