@@ -1,4 +1,5 @@
 //@ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import taskService from '@/services/taskService';
@@ -137,122 +138,159 @@ const fetchTaskTemplates = async () => {
  };
 
  return (
-   <div className="task-dashboard-wrapper">
-     <div className="task-dashboard-container">
-       <div className="dashboard-header">
-         <h1>Task Management</h1>
-       </div>
+  <div className=" dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
+  <div className="w-full mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+    <div className="flex items-center justify-between mb-6">
+      <h1 className="text-2xl font-bold">Task Management</h1>
+    </div>
 
-       <div className="filters-container">
-         <button
-           onClick={() => handleViewModeChange('overdue')}
-           className={`view-button ${viewMode === 'overdue' ? 'active' : ''}`}
-         >
-           Overdue Tasks
-         </button>
+    <div className="flex flex-wrap items-center space-x-4 mb-4">
+      <button
+        onClick={() => handleViewModeChange('overdue')}
+        className={`px-4 py-2 rounded ${
+          viewMode === 'overdue'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+        } hover:bg-blue-600 transition-colors`}
+      >
+        Overdue Tasks
+      </button>
 
-         <button
-           onClick={() => handleViewModeChange('pending')}
-           className={`view-button ${viewMode === 'pending' ? 'active' : ''}`}
-         >
-           Pending Tasks
-         </button>
+      <button
+        onClick={() => handleViewModeChange('pending')}
+        className={`px-4 py-2 rounded ${
+          viewMode === 'pending'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+        } hover:bg-blue-600 transition-colors`}
+      >
+        Pending Tasks
+      </button>
 
-         <input
-           type="date"
-           value={selectedDate}
-           onChange={handleDateChange}
-           className="date-input"
-           placeholder="Select due date"
-         />
-       </div>
+      <input
+        type="date"
+        value={selectedDate}
+        onChange={handleDateChange}
+        className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring focus:border-blue-500"
+        placeholder="Select due date"
+      />
+    </div>
 
-       <select
-         value={selectedManager}
-         onChange={(e) => setSelectedManager(e.target.value)}
-         className="manager-select"
-       >
-         <option value="">All Managers</option>
-         {managers.map(manager => (
-           <option key={manager.id} value={manager.id}>
-             {`${manager.firstName} ${manager.lastName}`}
-           </option>
-         ))}
-       </select>
+    <select
+      value={selectedManager}
+      onChange={(e) => setSelectedManager(e.target.value)}
+      className="mb-4 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring focus:border-blue-500"
+    >
+      <option value="">All Managers</option>
+      {managers.map((manager) => (
+        <option key={manager.id} value={manager.id}>
+          {`${manager.firstName} ${manager.lastName}`}
+        </option>
+      ))}
+    </select>
 
-       <div className="table-container">
-         <table>
-           <thead>
-             <tr>
-               <th>Task Description</th>
-               <th>Status</th>
-               <th>Due Date</th>
-               <th>Manager</th>
-               <th>Entity</th>
-               <th>Comments</th>
-             </tr>
-           </thead>
-           <tbody>
-             {loading ? (
-               <tr>
-                 <td colSpan="6" className="empty-state">Loading...</td>
-               </tr>
-             ) : tasks.length === 0 ? (
-               <tr>
-                 <td colSpan="6" className="empty-state">
-                   {viewMode === 'overdue'
-                     ? 'No overdue tasks found'
-                     : viewMode === 'pending'
-                     ? 'No pending tasks found'
-                     : viewMode === 'date'
-                     ? 'No tasks found for selected date range'
-                     : 'No tasks found'}
-                 </td>
-               </tr>
-             ) : (
-               tasks.map(task => (
-                 <tr key={task.id}>
-                   <td>
-                     <div><strong>{task.name}</strong></div>
-                     <div>{task.description}</div>
-                   </td>
-                   <td>
-                     <span className={`status-badge ${task.taskStatus?.toLowerCase()}`}>
-                       {task.taskStatus}
-                     </span>
-                   </td>
-                   <td>
-                     {task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-US', {
-                       year: 'numeric',
-                       month: 'short',
-                       day: 'numeric',
-                     }) : 'N/A'}
-                   </td>
-                   <td>{`${task.assignedManagerFirstName || ''} ${task.assignedManagerLastName || ''}`}</td>
-                   <td>{task.entityName}</td>
-                   <td>
-                     <input
-                       type="text"
-                       value={comments[task.id] || ''}
-                       onChange={(e) => handleCommentChange(task.id, e.target.value)}
-                       onBlur={() => handleCommentBlur(task)}
-                       onKeyDown={(e) => {
-                         if (e.key === 'Enter') {
-                           e.target.blur();
-                         }
-                       }}
-                       className="comment-input"
-                       placeholder=""
-                     />
-                   </td>
-                 </tr>
-               ))
-             )}
-           </tbody>
-         </table>
-       </div>
-     </div>
-   </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Task Description
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Status
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Due Date
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Manager
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Entity
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
+              Comments
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          {loading ? (
+            <tr>
+              <td colSpan="6" className="text-center p-4">
+                Loading...
+              </td>
+            </tr>
+          ) : tasks.length === 0 ? (
+            <tr>
+              <td colSpan="6" className="text-center p-4">
+                {viewMode === 'overdue'
+                  ? 'No overdue tasks found'
+                  : viewMode === 'pending'
+                  ? 'No pending tasks found'
+                  : viewMode === 'date'
+                  ? 'No tasks found for selected date range'
+                  : 'No tasks found'}
+              </td>
+            </tr>
+          ) : (
+            tasks.map((task) => (
+              <tr key={task.id}>
+                <td className="px-6 py-4 whitespace-normal">
+                  <div className="font-semibold">{task.name}</div>
+                  <div>{task.description}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      task.taskStatus?.toLowerCase() === 'completed'
+                        ? 'bg-green-100 text-green-800'
+                        : task.taskStatus?.toLowerCase() === 'pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : task.taskStatus?.toLowerCase() === 'overdue'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {task.taskStatus}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    : 'N/A'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {`${task.assignedManagerFirstName || ''} ${task.assignedManagerLastName || ''}`}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">{task.entityName}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <input
+                    type="text"
+                    value={comments[task.id] || ''}
+                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
+                    onBlur={() => handleCommentBlur(task)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.target.blur();
+                      }
+                    }}
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring focus:border-blue-500"
+                    placeholder="Add comment"
+                  />
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
  );
 };
 

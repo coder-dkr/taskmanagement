@@ -1,24 +1,31 @@
-import React, { useState, useEffect, useCallback } from 'react';
+//@ts-nocheck
+
+import  { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import debounce from 'lodash.debounce';
 import managerService from '@/services/managerService';
 
-const ManagerList: React.FC = () => {
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [newManager, setNewManager] = useState<any>({
+
+const ManagerList = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newManager, setNewManager] = useState({
         firstName: '',
         lastName: '',
         email: '',
         role: '',
         seniorManagerId: null,
     });
-    const [managers, setManagers] = useState<any[]>([]);
-    const [roles, setRoles] = useState<string[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const [roleFilter, setRoleFilter] = useState<string>('');
-    const [selectedManager, setSelectedManager] = useState<any>(null);
+    const [managers, setManagers] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [roleFilter, setRoleFilter] = useState('');
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'asc',
+    });
+    const [selectedManager, setSelectedManager] = useState(null);
     const [location,navigate] = useLocation();
 
     useEffect(() => {
@@ -26,20 +33,23 @@ const ManagerList: React.FC = () => {
     }, []);
 
     const debouncedFetchManagers = useCallback(
-        debounce(async (query: string, role: string) => {
+        debounce(async (query, role) => {
             try {
                 setLoading(true);
                 const data = await managerService.getAllManagers();
 
                 let filteredData = data;
                 if (query) {
-                    filteredData = filteredData.filter((manager: any) =>
-                        [manager.firstName, manager.lastName, manager.email, manager.seniorManagerName]
-                            .some((field) => field?.toLowerCase().includes(query.toLowerCase()))
+                    filteredData = filteredData.filter(
+                        (manager) =>
+                            manager.firstName.toLowerCase().includes(query.toLowerCase()) ||
+                            manager.lastName.toLowerCase().includes(query.toLowerCase()) ||
+                            manager.email.toLowerCase().includes(query.toLowerCase()) ||
+                            manager.seniorManagerName?.toLowerCase().includes(query.toLowerCase())
                     );
                 }
                 if (role) {
-                    filteredData = filteredData.filter((manager: any) => manager.role === role);
+                    filteredData = filteredData.filter((manager) => manager.role === role);
                 }
 
                 setManagers(filteredData);
@@ -71,7 +81,7 @@ const ManagerList: React.FC = () => {
         navigate('/');
     };
 
-    const handleAddManager = async (e: React.FormEvent) => {
+    const handleAddManager = async (e) => {
         e.preventDefault();
         try {
             const addedManager = await managerService.createManager(newManager);
@@ -90,35 +100,40 @@ const ManagerList: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="text-white text-center py-10">Loading...</div>;
-    if (error) return <div className="text-red-500 text-center py-10">{error}</div>;
+    // if (loading) return <div className="loading">Loading...</div>;
+    // if (error) return <div className="error">{error}</div>;
 
     return (
-        <div className="bg-black min-h-screen text-white p-6">
-            <div className="flex justify-between items-center mb-6">
-                <button onClick={handleBack} className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600">
-                    Back to Dashboard
-                </button>
-                <h1 className="text-2xl font-semibold">Managers</h1>
-                <button onClick={() => setIsModalOpen(true)} className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
-                    Add Manager
-                </button>
-            </div>
-
-            <div className="flex space-x-4 mb-6">
-                <input
-                    type="text"
-                    placeholder="Search managers..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-gray-800 text-white px-3 py-2 rounded w-1/2"
-                />
+        <div className="container bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300">
+        {/* Header */}
+        <div className="header flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800">
+       
+            <h1 className="text-xl font-semibold dark:text-white">Managers</h1>
+            <button
+                onClick={() => setIsModalOpen(true)}
+                className="add-client-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+            >
+                Add Manager
+            </button>
+        </div>
+    
+        {/* Filter Section */}
+        <div className="filter-section flex items-center p-4 space-x-4 bg-gray-50 dark:bg-gray-700">
+            <input
+                type="text"
+                placeholder="Search managers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input w-full p-2 border border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+            />
+            <div className="filter-group flex items-center">
+                <label className="filter-label mr-2 dark:text-white">Role:</label>
                 <select
-                    className="bg-gray-800 text-white px-3 py-2 rounded"
+                    className="filter-select border border-gray-300 rounded p-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                 >
-                    <option value="">All Roles</option>
+                    <option value="">All</option>
                     {roles.map((role) => (
                         <option key={role} value={role}>
                             {role.replace('_', ' ')}
@@ -126,66 +141,197 @@ const ManagerList: React.FC = () => {
                     ))}
                 </select>
             </div>
-
-            <div className="overflow-x-auto">
-                <table className="w-full border border-gray-700">
-                    <thead className="bg-gray-900">
+        </div>
+    
+        {/* Table Container */}
+        <div className="table-container overflow-x-auto p-4">
+            <table className="w-full table-auto">
+                <thead className="bg-gray-100 dark:bg-gray-800">
+                    <tr>
+                        <th className="px-4 py-2 text-left dark:text-white">ID</th>
+                        <th className="px-4 py-2 text-left dark:text-white">First Name</th>
+                        <th className="px-4 py-2 text-left dark:text-white">Last Name</th>
+                        <th className="px-4 py-2 text-left dark:text-white">Email</th>
+                        <th className="px-4 py-2 text-left dark:text-white">Role</th>
+                        <th className="px-4 py-2 text-left dark:text-white">Senior Manager</th>
+                        <th className="px-4 py-2 text-left dark:text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {managers.length === 0 ? (
                         <tr>
-                            <th className="p-2 border border-gray-700">ID</th>
-                            <th className="p-2 border border-gray-700">First Name</th>
-                            <th className="p-2 border border-gray-700">Last Name</th>
-                            <th className="p-2 border border-gray-700">Email</th>
-                            <th className="p-2 border border-gray-700">Role</th>
-                            <th className="p-2 border border-gray-700">Senior Manager</th>
-                            <th className="p-2 border border-gray-700">Actions</th>
+                            <td colSpan={7} className="px-4 py-2 text-center dark:text-white">
+                                No managers found
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {managers.length === 0 ? (
-                            <tr>
-                                <td colSpan={7} className="text-center py-4">
-                                    No managers found
-                                </td>
-                            </tr>
-                        ) : (
-                            managers.map((manager) => (
-                                <tr key={manager.id} className="text-center border border-gray-700">
-                                    <td className="p-2">{manager.id}</td>
-                                    <td className="p-2">{manager.firstName}</td>
-                                    <td className="p-2">{manager.lastName}</td>
-                                    <td className="p-2">{manager.email}</td>
-                                    <td className="p-2">{manager.role?.replace('_', ' ')}</td>
-                                    <td className="p-2">{manager.seniorManagerName || '-'}</td>
-                                    <td className="p-2 flex justify-center space-x-2">
+                    ) : (
+                        managers.map((manager) => (
+                            <tr key={manager.id} className="border-b dark:border-gray-700">
+                                <td className="px-4 py-2 dark:text-white">{manager.id}</td>
+                                <td className="px-4 py-2 dark:text-white">{manager.firstName}</td>
+                                <td className="px-4 py-2 dark:text-white">{manager.lastName}</td>
+                                <td className="px-4 py-2 dark:text-white">{manager.email}</td>
+                                <td className="px-4 py-2 dark:text-white">{manager.role?.replace('_', ' ')}</td>
+                                <td className="px-4 py-2 dark:text-white">{manager.seniorManagerName || '-'}</td>
+                                <td className="px-4 py-2">
+                                    <div className="action-buttons flex space-x-2">
                                         <button
-                                            className="bg-green-500 px-3 py-1 rounded hover:bg-green-600"
+                                            className="btn btn-edit bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700"
                                             onClick={() => setSelectedManager(manager)}
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
                                             onClick={async () => {
                                                 if (window.confirm('Are you sure you want to delete this manager?')) {
                                                     try {
                                                         await managerService.deleteManager(manager.id);
-                                                        debouncedFetchManagers(searchQuery, roleFilter);
+                                                        debouncedLoadManagers(searchQuery, currentPage);
                                                     } catch (error) {
                                                         console.error('Error deleting manager:', error);
                                                     }
                                                 }
                                             }}
+                                            className="btn btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
                                         >
                                             Delete
                                         </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
         </div>
+    
+        {/* Edit Manager Modal */}
+        {selectedManager && (
+            <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="modal-content edit-form bg-white dark:bg-gray-800 p-6 rounded-lg w-1/3">
+                    <h2 className="text-xl font-semibold mb-4 dark:text-white">Edit Manager</h2>
+                    <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                            await managerService.updateManager(selectedManager.id, selectedManager);
+                            setSelectedManager(null);
+                            debouncedFetchManagers(searchQuery, roleFilter);
+                        } catch (error) {
+                            console.error('Error updating manager:', error);
+                        }
+                    }}>
+                        <input
+                            type="text"
+                            placeholder="First Name"
+                            value={selectedManager.firstName}
+                            onChange={(e) => setSelectedManager(prev => ({...prev, firstName: e.target.value}))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Last Name"
+                            value={selectedManager.lastName}
+                            onChange={(e) => setSelectedManager(prev => ({...prev, lastName: e.target.value}))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={selectedManager.email}
+                            onChange={(e) => setSelectedManager(prev => ({...prev, email: e.target.value}))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <select
+                            value={selectedManager.role}
+                            onChange={(e) => setSelectedManager(prev => ({...prev, role: e.target.value}))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        >
+                            <option value="">Select Role</option>
+                            {roles.map((role) => (
+                                <option key={role} value={role}>
+                                    {role.replace('_', ' ')}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex justify-end space-x-2">
+                            <button
+                                type="submit"
+                                className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+                            >
+                                Save
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+                                onClick={() => setSelectedManager(null)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
+    
+        {/* Add Manager Modal */}
+        {isModalOpen && (
+            <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="modal-content add-form bg-white dark:bg-gray-800 p-6 rounded-lg w-1/3">
+                    <h2 className="text-xl font-semibold mb-4 dark:text-white">Add Manager</h2>
+                    <form onSubmit={handleAddManager}>
+                        <input
+                            type="text"
+                            placeholder="First Name"
+                            value={newManager.firstName}
+                            onChange={(e) => setNewManager((prev) => ({ ...prev, firstName: e.target.value }))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Last Name"
+                            value={newManager.lastName}
+                            onChange={(e) => setNewManager((prev) => ({ ...prev, lastName: e.target.value }))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={newManager.email}
+                            onChange={(e) => setNewManager((prev) => ({ ...prev, email: e.target.value }))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <select
+                            value={newManager.role}
+                            onChange={(e) => setNewManager((prev) => ({ ...prev, role: e.target.value }))}
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        >
+                            <option value="">Select Role</option>
+                            {roles.map((role) => (
+                                <option key={role} value={role}>
+                                    {role.replace('_', ' ')}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex justify-end space-x-2">
+                            <button
+                                type="submit"
+                                className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+                            >
+                                Submit
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
+    </div>
     );
 };
 

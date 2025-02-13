@@ -22,7 +22,7 @@ import { clientService } from "@/services/clientService";
 import entityService from "@/services/entityService";
 import taskService from "@/services/taskService";
 import managerService from "@/services/managerService";
-import "./MondayStyleDashboard.css";
+
 import StatusDropdown from "@/components/StatusDropdown";
 
 const MondayStyleDashboard = () => {
@@ -590,16 +590,17 @@ const MondayStyleDashboard = () => {
     setIsDateFilterOpen(false);
   };
   return (
-    <div className="monday-container">
-      <div className="monday-header">
-        <div className="header-left">
-          <h1>Task Management</h1>
-        </div>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
+    <div className=" mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Task Management</h1>
       </div>
 
-      <div className="table-controls">
+      {/* Table Controls */}
+      <div className="flex flex-wrap items-center gap-4 mb-4">
         <button
-          className="new-task-button"
+          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition-colors"
           onClick={() => {
             const expandedEntityIds = Object.keys(expandedEntities).filter(
               (id) => expandedEntities[id]
@@ -614,42 +615,39 @@ const MondayStyleDashboard = () => {
                 setEntityName(entity.name);
                 setIsTaskFormOpen(true);
               } else {
-               
-                toast ({
-                  title : "error",
-                  description : "Please expand an entity first"
-                })
+                toast.error('Please expand an entity first');
               }
             } else {
-              toast ({
-                title : "error",
-                description : "Please expand an entity first"
-              })
+              toast.error('Please expand an entity first');
             }
           }}
         >
-          New task <ChevronDown size={16} />
+          New Task <ChevronDown size={16} />
         </button>
-        <div className="search-wrapper">
-          <Search size={16} />
+
+        <div className="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1">
+          <Search size={16} className="mr-2" />
           <input
             type="text"
             placeholder="Search clients or entities..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
+            className="bg-transparent focus:outline-none text-sm"
           />
         </div>
+
         <button
-          className="date-filter-btn"
+          className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition-colors"
           onClick={() => setIsDateFilterOpen(true)}
         >
           <Calendar size={16} /> Date Range
         </button>
-        <div className="control-buttons">
+
+        <div className="flex items-center gap-4">
           <select
-            className="manager-filter"
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
             value={selectedManager}
-            onChange={(e) => filterByManager(e.target.value)}
+            onChange={(e) => setSelectedManager(e.target.value)}
           >
             <option value="">All Managers</option>
             {managers.map((manager) => (
@@ -659,9 +657,9 @@ const MondayStyleDashboard = () => {
             ))}
           </select>
           <select
-            className="status-filter"
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
             value={selectedStatus}
-            onChange={(e) => filterByStatus(e.target.value)}
+            onChange={(e) => setSelectedStatus(e.target.value)}
           >
             <option value="">All Statuses</option>
             <option value="OVERDUE">Overdue</option>
@@ -672,24 +670,25 @@ const MondayStyleDashboard = () => {
         </div>
       </div>
 
-      <div className="table-wrapper">
-        <table className="monday-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Manager in Charge</th>
-              <th>Due Date</th>
-              <th>Status</th>
-              <th>Actions</th>
+      {/* Table */}
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
+            <tr className="w-full">
+         
+              <th className="px-4 py-2 text-left">Name</th>
+              <th className="px-4 py-2 text-left">Manager in Charge</th>
+              <th className="px-4 py-2 text-left">Due Date</th>
+              <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
-                <td colSpan="6">
-                  <div className="loading">
-                    <div className="spinner"></div>
+                <td colSpan="6" className="text-center py-4">
+                  <div className="flex justify-center items-center">
+                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 </td>
               </tr>
@@ -697,28 +696,27 @@ const MondayStyleDashboard = () => {
               clients.map((client) => (
                 <React.Fragment key={client.id}>
                   <tr
-                    className="client-row"
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleClientClick(client)}
-                    style={{ cursor: "pointer" }}
                   >
-                    <td className="expand-cell">
+                    <td className="px-4 py-2">
                       {expandedClients[client.id] ? (
-                        <ChevronDown size={16} className="expand-icon" />
+                        <ChevronDown size={16} className="text-gray-600" />
                       ) : (
-                        <Plus size={16} className="expand-icon" />
+                        <Plus size={16} className="text-gray-600" />
                       )}
                     </td>
-                    <td>{client.name}</td>
-                    <td>
-                      {entitiesMap[client.id]?.[0]?.managerFirstName}{" "}
+                    <td className="px-4 py-2">{client.name}</td>
+                    <td className="px-4 py-2">
+                      {entitiesMap[client.id]?.[0]?.managerFirstName}{' '}
                       {entitiesMap[client.id]?.[0]?.managerLastName}
-                    </td>{" "}
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <div className="action-buttons">
+                    </td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-4 py-2">
+                      <div className="flex items-center gap-2">
                         <button
-                          className="icon-button edit button"
+                          className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClientClick(client);
@@ -727,7 +725,7 @@ const MondayStyleDashboard = () => {
                           <Settings size={16} /> Edit
                         </button>
                         <button
-                          className="icon-button delete-button"
+                          className="flex items-center gap-1 text-red-600 hover:text-red-800"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteClientClick(client);
@@ -743,27 +741,26 @@ const MondayStyleDashboard = () => {
                     entitiesMap[client.id]?.map((entity) => (
                       <React.Fragment key={entity.id}>
                         <tr
-                          className="entity-row"
+                          className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleEntityClick(entity)}
-                          style={{ cursor: "pointer" }}
                         >
-                          <td className="expand-cell with-indent">
+                          <td className="px-4 py-2 pl-8">
                             {expandedEntities[entity.id] ? (
-                              <ChevronDown size={16} className="expand-icon" />
+                              <ChevronDown size={16} className="text-gray-600" />
                             ) : (
-                              <Plus size={16} className="expand-icon" />
+                              <Plus size={16} className="text-gray-600" />
                             )}
                           </td>
-                          <td>{entity.name}</td>
-                          <td>
+                          <td className="px-4 py-2">{entity.name}</td>
+                          <td className="px-4 py-2">
                             {entity.managerFirstName} {entity.managerLastName}
                           </td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div className="action-buttons">
+                          <td className="px-4 py-2"></td>
+                          <td className="px-4 py-2"></td>
+                          <td className="px-4 py-2">
+                            <div className="flex items-center gap-2">
                               <button
-                                className="icon-button edit-button"
+                                className="text-blue-600 hover:text-blue-800"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleEditEntityClick(entity);
@@ -772,7 +769,7 @@ const MondayStyleDashboard = () => {
                                 <Settings size={16} />
                               </button>
                               <button
-                                className="icon-button delete-button"
+                                className="text-red-600 hover:text-red-800"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleDeleteEntity(entity);
@@ -786,20 +783,23 @@ const MondayStyleDashboard = () => {
 
                         {expandedEntities[entity.id] &&
                           tasksMap[entity.id]?.map((task) => (
-                            <tr key={task.id} className="task-row">
-                              <td className="with-double-indent"></td>
-                              <td>{task.name}</td>
-                              <td>
-                                {task.assignedManagerFirstName}{" "}
+                            <tr
+                              key={task.id}
+                              className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              <td className="px-4 py-2 pl-16"></td>
+                              <td className="px-4 py-2">{task.name}</td>
+                              <td className="px-4 py-2">
+                                {task.assignedManagerFirstName}{' '}
                                 {task.assignedManagerLastName}
                               </td>
-                              <td className="due-date">
+                              <td className="px-4 py-2">
                                 <input
                                   type="date"
                                   value={
                                     task.dueDate
-                                      ? task.dueDate.split("T")[0]
-                                      : ""
+                                      ? task.dueDate.split('T')[0]
+                                      : ''
                                   }
                                   onChange={async (e) => {
                                     try {
@@ -811,37 +811,32 @@ const MondayStyleDashboard = () => {
                                         task.id,
                                         updatedTask
                                       );
-
                                       const updatedTasks =
                                         await taskService.getTasksByEntity(
                                           task.entityId
                                         );
                                       setTasksMap((prev) => ({
                                         ...prev,
-                                        [task.entityId]: updatedTasks || [],
+                                        [task.entityId]:
+                                          updatedTasks || [],
                                       }));
-
-                                      
-                                      toast ({
-                                        title : "error",
-                                        description : "Due date updated successfully"
-                                      })
+                                      toast.success(
+                                        'Due date updated successfully'
+                                      );
                                     } catch (error) {
                                       console.error(
-                                        "Error updating due date:",
+                                        'Error updating due date:',
                                         error
                                       );
-                                      
-                                      toast ({
-                                        title : "error",
-                                        description : "Failed to update due date"
-                                      })
+                                      toast.error(
+                                        'Failed to update due date'
+                                      );
                                     }
                                   }}
-                                  className="border-none bg-transparent cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-2 py-1"
+                                  className="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-500"
                                 />
                               </td>
-                              <td>
+                              <td className="px-4 py-2">
                                 <StatusDropdown
                                   currentStatus={task.taskStatus}
                                   onStatusChange={(newStatus) =>
@@ -853,39 +848,39 @@ const MondayStyleDashboard = () => {
                                   }
                                 />
                               </td>
-                              <td>
-                                <div className="action-buttons">
+                              <td className="px-4 py-2">
+                                <div className="flex items-center gap-2">
                                   <button
-                                    className="icon-button"
+                                    className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setActiveTask(task);
-                                      setComment(task.comment || "");
+                                      setComment(task.comment || '');
                                       setIsCommentModalOpen(true);
                                     }}
                                   >
                                     <MessageSquare size={16} />
                                     {task.comment && (
-                                      <span className="comment-preview">
+                                      <span className="text-sm">
                                         {task.comment.substring(0, 20)}...
                                       </span>
                                     )}
                                   </button>
                                   <button
+                                    className="text-blue-600 hover:text-blue-800"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleEditClick(task);
                                     }}
-                                    className="icon-button"
                                   >
                                     <Settings size={16} />
                                   </button>
                                   <button
+                                    className="text-red-600 hover:text-red-800"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleDeleteClick(task);
                                     }}
-                                    className="icon-button delete-button"
                                   >
                                     <X size={16} />
                                   </button>
@@ -902,261 +897,330 @@ const MondayStyleDashboard = () => {
         </table>
       </div>
 
+      {/* Date Filter Modal */}
       {isDateFilterOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Date Range Filter</h2>
-            <div className="date-picker-wrapper">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">
+              Date Range Filter
+            </h2>
+            <div className="flex items-center gap-2 mb-4">
               <input
                 type="date"
                 value={dateRange.startDate}
                 onChange={(e) =>
-                  setDateRange({ ...dateRange, startDate: e.target.value })
+                  setDateRange({
+                    ...dateRange,
+                    startDate: e.target.value,
+                  })
                 }
+                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
               />
               <span>to</span>
               <input
                 type="date"
                 value={dateRange.endDate}
                 onChange={(e) =>
-                  setDateRange({ ...dateRange, endDate: e.target.value })
+                  setDateRange({
+                    ...dateRange,
+                    endDate: e.target.value,
+                  })
                 }
+                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
               />
             </div>
-            <div className="button-group">
-              <button onClick={handleDateRangeFilter}>Apply</button>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={handleDateRangeFilter}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Apply
+              </button>
               <button
                 onClick={() => {
                   loadInitialData();
                   setIsDateFilterOpen(false);
                 }}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
               >
                 Reset Filters
               </button>
-              <button onClick={() => setIsDateFilterOpen(false)}>Cancel</button>
+              <button
+                onClick={() => setIsDateFilterOpen(false)}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* New Task Modal */}
       {isTaskFormOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Create New Task</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Create New Task</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsTaskFormOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleNewTask} className="add-form">
-                <div className="form-group">
-                  <label>Entity</label>
-                  <div className="form-control-static">{entityName}</div>
+            <form onSubmit={handleNewTask} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Entity
+                </label>
+                <div className="bg-gray-200 dark:bg-gray-700 rounded px-3 py-2">
+                  {entityName}
                 </div>
-                <div className="form-group">
-                  <label htmlFor="taskName">Task Name*</label>
-                  <input
-                    id="taskName"
-                    type="text"
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    placeholder="Enter task name"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter task description"
-                    rows="4"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="dueDate">Due Date*</label>
-                  <input
-                    id="dueDate"
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="assignedManagerId">Assigned Manager</label>
-                  <select
-                    value={assignedManagerId}
-                    onChange={(e) => setAssignedManagerId(e.target.value)}
-                    required
-                  >
-                    <option value="">Select a Manager</option>
-                    {managers.map((manager) => (
-                      <option key={manager.id} value={manager.id}>
-                        {manager.firstName} {manager.lastName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="button-group">
-                  <button
-                    type="submit"
-                    className="btn-success"
-                    disabled={loading}
-                  >
-                    {loading ? "Creating..." : "Create Task"}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setIsTaskFormOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="taskName"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Task Name*
+                </label>
+                <input
+                  id="taskName"
+                  type="text"
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                  placeholder="Enter task name"
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter task description"
+                  rows="4"
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="dueDate"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Due Date*
+                </label>
+                <input
+                  id="dueDate"
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="assignedManagerId"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Assigned Manager
+                </label>
+                <select
+                  value={assignedManagerId}
+                  onChange={(e) => setAssignedManagerId(e.target.value)}
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                >
+                  <option value="">Select a Manager</option>
+                  {managers.map((manager) => (
+                    <option key={manager.id} value={manager.id}>
+                      {manager.firstName} {manager.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  {loading ? 'Creating...' : 'Create Task'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsTaskFormOpen(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
       {/* Edit Task Modal */}
       {isEditModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Edit Task</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Edit Task</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsEditModalOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleUpdateTask} className="add-form">
-                <div className="form-group">
-                  <label htmlFor="editTaskName">Task Name*</label>
-                  <input
-                    id="editTaskName"
-                    type="text"
-                    value={editingTask?.name || ""}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        name: e.target.value,
-                      })
-                    }
-                    placeholder="Enter task name"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="editDescription">Description</label>
-                  <textarea
-                    id="editDescription"
-                    value={editingTask?.description || ""}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Enter task description"
-                    rows="4"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="editDueDate">Due Date*</label>
-                  <input
-                    id="editDueDate"
-                    type="date"
-                    value={editingTask?.dueDate || ""}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        dueDate: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="editAssignedManager">Assigned Manager</label>
-                  <select
-                    value={editingTask?.assignedManagerId || ""}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        assignedManagerId: e.target.value,
-                      })
-                    }
-                    required
-                  >
-                    <option value="">Select a Manager</option>
-                    {managers.map((manager) => (
-                      <option key={manager.id} value={manager.id}>
-                        {manager.firstName} {manager.lastName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="button-group">
-                  <button
-                    type="submit"
-                    className="btn-success"
-                    disabled={loading}
-                  >
-                    {loading ? "Updating..." : "Update Task"}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setIsEditModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            <form onSubmit={handleUpdateTask} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="editTaskName"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Task Name*
+                </label>
+                <input
+                  id="editTaskName"
+                  type="text"
+                  value={editingTask?.name || ''}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      name: e.target.value,
+                    })
+                  }
+                  placeholder="Enter task name"
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="editDescription"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="editDescription"
+                  value={editingTask?.description || ''}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="Enter task description"
+                  rows="4"
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="editDueDate"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Due Date*
+                </label>
+                <input
+                  id="editDueDate"
+                  type="date"
+                  value={editingTask?.dueDate || ''}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      dueDate: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="editAssignedManager"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Assigned Manager
+                </label>
+                <select
+                  value={editingTask?.assignedManagerId || ''}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      assignedManagerId: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                >
+                  <option value="">Select a Manager</option>
+                  {managers.map((manager) => (
+                    <option key={manager.id} value={manager.id}>
+                      {manager.firstName} {manager.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  {loading ? 'Updating...' : 'Update Task'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Confirm Delete</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Confirm Delete</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsDeleteModalOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
+            <div>
               <p>
-                Are you sure you want to delete the task "{taskToDelete?.name}"?
+                Are you sure you want to delete the task "
+                {taskToDelete?.name}"?
               </p>
               <p>This action cannot be undone.</p>
-              <div className="button-group mt-4">
+              <div className="flex justify-end gap-2 mt-4">
                 <button
                   onClick={handleDeleteConfirm}
-                  className="btn-danger"
-                  disabled={loading}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
                 >
-                  {loading ? "Deleting..." : "Delete"}
+                  {loading ? 'Deleting...' : 'Delete'}
                 </button>
                 <button
                   onClick={() => setIsDeleteModalOpen(false)}
-                  className="btn-cancel"
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 >
                   Cancel
                 </button>
@@ -1165,163 +1229,186 @@ const MondayStyleDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Edit Client Modal */}
       {isEditClientModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Edit Client</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Edit Client</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsEditClientModalOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleUpdateClient}>
-                <div className="form-group">
-                  <label htmlFor="clientName">Client Name</label>
-                  <input
-                    type="text"
-                    id="clientName"
-                    value={editingClient?.name || ""}
-                    onChange={(e) =>
-                      setEditingClient({
-                        ...editingClient,
-                        name: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="button-group">
-                  <button type="submit" className="btn-success">
-                    Update Client
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setIsEditClientModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            <form onSubmit={handleUpdateClient}>
+              <div className="mb-4">
+                <label
+                  htmlFor="clientName"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Client Name
+                </label>
+                <input
+                  type="text"
+                  id="clientName"
+                  value={editingClient?.name || ''}
+                  onChange={(e) =>
+                    setEditingClient({
+                      ...editingClient,
+                      name: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Update Client
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditClientModalOpen(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
+
+      {/* Edit Entity Modal */}
       {isEditEntityModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Edit Entity</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Edit Entity</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsEditEntityModalOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleUpdateEntity}>
-                <div className="form-group">
-                  <label>Entity Name</label>
-                  <input
-                    type="text"
-                    value={editingEntity?.name || ""}
-                    onChange={(e) =>
-                      setEditingEntity({
-                        ...editingEntity,
-                        name: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Manager in Charge</label>
-                  <select
-                    value={editingEntity?.managerId || ""}
-                    onChange={(e) =>
-                      setEditingEntity({
-                        ...editingEntity,
-                        managerId: e.target.value,
-                      })
-                    }
-                    required
-                  >
-                    <option value="">Select Manager</option>
-                    {managers.map((manager) => (
-                      <option key={manager.id} value={manager.id}>
-                        {manager.firstName} {manager.lastName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="button-group">
-                  <button type="submit" className="btn-success">
-                    Update Entity
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setIsEditEntityModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            <form onSubmit={handleUpdateEntity}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">
+                  Entity Name
+                </label>
+                <input
+                  type="text"
+                  value={editingEntity?.name || ''}
+                  onChange={(e) =>
+                    setEditingEntity({
+                      ...editingEntity,
+                      name: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">
+                  Manager in Charge
+                </label>
+                <select
+                  value={editingEntity?.managerId || ''}
+                  onChange={(e) =>
+                    setEditingEntity({
+                      ...editingEntity,
+                      managerId: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                >
+                  <option value="">Select Manager</option>
+                  {managers.map((manager) => (
+                    <option key={manager.id} value={manager.id}>
+                      {manager.firstName} {manager.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Update Entity
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditEntityModalOpen(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
+
+      {/* Comment Modal */}
       {isCommentModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Task Comment</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Task Comment</h2>
               <button
-                className="close-button"
+                className="text-gray-600 hover:text-gray-800"
                 onClick={() => setIsCommentModalOpen(false)}
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="modal-body">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleUpdateTaskComment(activeTask, comment);
-                  setIsCommentModalOpen(false);
-                }}
-              >
-                <div className="form-group">
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Enter your comment..."
-                    rows="4"
-                  />
-                </div>
-                <div className="button-group">
-                  <button type="submit" className="btn-success">
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setIsCommentModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateTaskComment(activeTask, comment);
+                setIsCommentModalOpen(false);
+              }}
+            >
+              <div className="mb-4">
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Enter your comment..."
+                  rows="4"
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCommentModalOpen(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
     </div>
+  </div>
   );
 };
 
