@@ -22,7 +22,7 @@ import { clientService } from "@/services/clientService";
 import entityService from "@/services/entityService";
 import taskService from "@/services/taskService";
 import managerService from "@/services/managerService";
-
+import {RotateCcw} from 'lucide-react'
 import StatusDropdown from "@/components/StatusDropdown";
 
 const MondayStyleDashboard = () => {
@@ -589,6 +589,16 @@ const MondayStyleDashboard = () => {
     setTasksMap(newTasksMap);
     setIsDateFilterOpen(false);
   };
+
+
+
+  const handleResetFilters = () => {
+    setDateRange({ startDate: "", endDate: ""})
+    setSelectedStatus("")
+    setSearchTerm("")
+
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
     <div className=" mx-auto">
@@ -598,7 +608,8 @@ const MondayStyleDashboard = () => {
       </div>
 
       {/* Table Controls */}
-      <div className="flex flex-wrap items-center gap-4 mb-4">
+      <div className="flex flex-wrap items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center gap-4">
         <button
           className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition-colors"
           onClick={() => {
@@ -668,6 +679,8 @@ const MondayStyleDashboard = () => {
             <option value="COMPLETED">Completed</option>
           </select>
         </div>
+        </div>
+        <button onClick={handleResetFilters} className={`px-4 py-2 rounded "bg-gray-200 hover:bg-gray-400 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors flex gap-2 items-center`}>Reset <RotateCcw size={14}/></button>
       </div>
 
       {/* Table */}

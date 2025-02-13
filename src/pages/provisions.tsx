@@ -19,6 +19,7 @@ import entityService from "@/services/entityService";
 import provisionService from "@/services/provisionService";
 import managerService from "@/services/managerService";
 import StatusDropdown from "@/components/StatusDropdown";
+import { RotateCcw } from "lucide-react";
 
 
 const ProvisionDashboard = () => {
@@ -283,6 +284,14 @@ const ProvisionDashboard = () => {
     }
   };
 
+  const handleResetFilters = () => {
+    setSelectedManager("")
+    setSearchTerm("")
+    setDateRange({ startDate: "", endDate: "" })
+    setSelectedStatus("")
+
+  }
+
   return (
     <div className=" bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300">
     {/* Header */}
@@ -295,6 +304,7 @@ const ProvisionDashboard = () => {
   
     {/* Table Controls */}
     <div className="table-controls flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
+      <div className="table-controls flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700">
       <div className="search-wrapper flex items-center space-x-2 bg-white dark:bg-gray-600 p-2 rounded-lg border border-gray-300 dark:border-gray-500">
         <Search size={16} className="text-gray-500 dark:text-gray-300" />
         <input
@@ -305,13 +315,7 @@ const ProvisionDashboard = () => {
           className="bg-transparent outline-none dark:text-white"
         />
       </div>
-      <button
-        className="date-filter-btn flex items-center space-x-2 bg-white dark:bg-gray-600 p-2 rounded-lg border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-500"
-        onClick={() => setIsDateFilterOpen(true)}
-      >
-        <Calendar size={16} className="text-gray-500 dark:text-gray-300" />
-        <span className="dark:text-white">Date Range</span>
-      </button>
+     
       <div className="control-buttons flex space-x-4">
         <select
           className="manager-filter bg-white dark:bg-gray-600 p-2 rounded-lg border border-gray-300 dark:border-gray-500 dark:text-white"
@@ -337,6 +341,16 @@ const ProvisionDashboard = () => {
           <option value="COMPLETED">Completed</option>
         </select>
       </div>
+      <button onClick={handleResetFilters}  className={`px-4 py-2 rounded "bg-gray-200 hover:bg-gray-400 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors flex gap-2 items-center`}>Reset <RotateCcw size={14}/></button>
+
+        </div>
+      <button
+        className="date-filter-btn flex items-center space-x-2 bg-white dark:bg-gray-600 p-2 rounded-lg border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-500"
+        onClick={() => setIsDateFilterOpen(true)}
+      >
+        <Calendar size={16} className="text-gray-500 dark:text-gray-300" />
+        <span className="dark:text-white">Date Range</span>
+      </button>
     </div>
   
     {/* Table Wrapper */}

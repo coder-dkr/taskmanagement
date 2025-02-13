@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { clientService } from '@/services/clientService';
+import { exportClientsList } from '@/services/exportService';
 import { debounce } from '@/lib/debounce';
 import { ChevronLeft , ChevronRight } from 'lucide-react';
 
@@ -113,17 +114,25 @@ const ClientList = () => {
     <div className="header flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800">
         <h1 className="text-xl font-semibold dark:text-white  text-black">Clients</h1>
         <button
+            onClick={exportClientsList}
+            className="text-white px-4 py-2 rounded bg-gray-800 dark:bg-gray-600"
+
+        >
+            Export list
+        </button>
+        
+    </div>
+    <button
             onClick={() => {
                 setCurrentClient(null);
                 setNewClient({ name: '', sector: '', email: '' });
                 setEmailError('');
                 setShowModal(true);
             }}
-            className="add-client-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+            className="add-client-btn mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
         >
             Add Client
         </button>
-    </div>
 
     {/* Search Input */}
     <input

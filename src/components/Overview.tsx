@@ -1,35 +1,45 @@
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
-import { useQuery } from "@tanstack/react-query";
 import { Users, Building2, CheckSquare, BarChart2 } from "lucide-react";
-import type { Client, Entity, Task } from "../shared/schema";
+import { getClientsCount, getEntitiesCount } from "../services/statsService";
 
 export function Overview() {
-  const { data: clients = [] } = useQuery<Client[]>({ 
-    queryKey: ['/api/clients']
-  });
+  const [clientsCount, setClientsCount] = useState<number | null>(null);
+  const [entitiesCount, setEntitiesCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const clients = await getClientsCount();
+      const entities = await getEntitiesCount();
+      setClientsCount(clients);
+      setEntitiesCount(entities);
+    };
+
+    fetchData();
+  }, []);
 
   const stats = [
     {
       label: "Total Clients",
-      value: clients.length,
+      value: clientsCount !== null ? clientsCount : "Loading...",
       icon: Users,
       color: "text-blue-500"
     },
     {
       label: "Total Entities",
-      value: "Loading...",
+      value: entitiesCount !== null ? entitiesCount : "Loading...",
       icon: Building2,
       color: "text-green-500"
     },
     {
       label: "Total Tasks",
-      value: "Loading...",
+      value: "Loading...", 
       icon: CheckSquare,
       color: "text-purple-500"
     },
     {
       label: "Completion Rate",
-      value: "78%",
+      value: "78%", 
       icon: BarChart2,
       color: "text-orange-500"
     }
