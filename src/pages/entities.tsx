@@ -182,13 +182,13 @@ const EntityList = () => {
         navigate(`/entities/${entityId}/tasks`);
     };
 
-    if (loading) return <div className="loading">Loading...</div>;
-    if (error) return <div className="error">{error}</div>;
+    // if (loading) return <div className="loading">Loading...</div>;
+    // if (error) return <div className="error">{error}</div>;
 
     return (
-        <div className="w-full mx-auto bg-white dark:bg-[#1F2937] dark:text-white">
+        <div className="w-full mx-auto bg-white dark:bg-[#1F2937] dark:text-white text-black">
         <div className="header flex justify-between items-center p-4 dark:text-white">
-            <h1 className="mt-3 text-xl font-semibold dark:text-white">{clientId ? 'Client Entities' : 'All Entities'}</h1>
+            <h1 className="mt-3 text-xl font-semibold dark:text-white text-black">{clientId ? 'Client Entities' : 'All Entities'}</h1>
             <div>
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -214,13 +214,13 @@ const EntityList = () => {
                 placeholder="Search entities..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input dark:border-0 border px-3 py-2 w-64 dark:text-white dark:bg-gray-600 outline-none rounded-md"
+                className="search-input dark:border-0 border px-3 py-2 w-64 dark:text-white text-black dark:bg-gray-600 outline-none rounded-md"
             />
     
             <div className="filter-group flex items-center">
                 <label className="filter-label mr-2">Status:</label>
                 <select
-                    className="filter-select border border-gray-300 rounded px-3 py-2 dark:text-white dark:bg-gray-600 "
+                    className="filter-select border border-gray-300 rounded px-3 py-2 dark:text-white text-black dark:bg-gray-600 "
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -237,18 +237,18 @@ const EntityList = () => {
                 <thead>
                     <tr className="dark:bg-gray-600 dark:text-white">
                         {!clientId && <th className="px-4 py-2 text-left bg-transparent dark:text-white">Client</th>}
-                        <th className="px-4 py-2 text-left bg-transparent dark:text-white ">Entity Name</th>
-                        <th className="px-4 py-2 text-left bg-transparent dark:text-white">Status</th>
-                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white">Senior Manager</th>
-                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white">Assigned Manager</th>
-                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white">Actions</th>
+                        <th className="px-4 py-2 text-left bg-transparent dark:text-white  text-black">Entity Name</th>
+                        <th className="px-4 py-2 text-left bg-transparent dark:text-white text-black">Status</th>
+                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white text-black">Senior Manager</th>
+                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white text-black">Assigned Manager</th>
+                        <th className="px-4 py-2 text-left  bg-transparent dark:text-white text-black">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                     entities.length === 0 ? (
                         <tr>
-                            <td colSpan={clientId ? 5 : 6} className="px-4 py-2 text-center dark:bg-gray-600 text-black dark:text-white">
+                            <td colSpan={clientId ? 5 : 6} className="px-4 py-2 text-center dark:bg-gray-600 text-black dark:text-white text-black">
                                 No entities found
                             </td>
                         </tr>
@@ -260,14 +260,14 @@ const EntityList = () => {
                                 <td className="px-4 py-2">
                                     <span
                                         onClick={() => handleEntityClick(entity.id)}
-                                        className="entity-name-link text-blue-500 hover:text-blue-700 cursor-pointer"
+                                        className="entity-name-link text-black dark:text-white hover:text-blue-700 cursor-pointer"
                                     >
                                         {entity.name}
                                         
                                     </span>
                                 </td>
                                 <td className="px-4 py-2">
-                                    <span className={`status-badge ${getStatusClass(entity.status)} px-2 py-1 rounded-full text-sm`}>
+                                    <span className={`status-badge ${getStatusClass(entity.status)} px-2 py-1 rounded-full text-sm text-black dark:text-white`}>
                                         {entity.status}
                                       
                                     </span>
@@ -275,7 +275,7 @@ const EntityList = () => {
                                 <td className="px-4 py-2">
                                     <div>
                                         {entity.seniorManagerFirstName} {entity.seniorManagerLastName}
-                                        <span className={`role-badge ${getRoleBadgeClass(entity.seniorManagerRole)} ml-2 px-2 py-1 rounded-full text-sm`}>
+                                        <span className={`role-badge ${getRoleBadgeClass(entity.seniorManagerRole)} ml-2 px-2 py-1 rounded-full text-sm text-black dark:text-white`}>
                                             {entity.seniorManagerRole}
                                         </span>
                                     </div>
@@ -283,7 +283,7 @@ const EntityList = () => {
                                 <td className="px-4 py-2">
                                     <div>
                                         {entity.managerFirstName} {entity.managerLastName}
-                                        <span className={`role-badge ${getRoleBadgeClass(entity.managerRole)} ml-2 px-2 py-1 rounded-full text-sm`}>
+                                        <span className={`role-badge ${getRoleBadgeClass(entity.managerRole)} ml-2 px-2 py-1 rounded-full text-sm text-black dark:text-white`}>
                                             {entity.managerRole}
                                         </span>
                                     </div>
@@ -291,7 +291,7 @@ const EntityList = () => {
                                 <td className="px-4 py-2">
                                     <div className="action-buttons flex space-x-2">
                                         <button
-                                            className="btn btn-edit bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                                            className="btn btn-edit bg-yellow-500 dark:text-white px-3 py-1 rounded hover:bg-yellow-600"
                                             onClick={() => handleEdit(entity)}
                                         >
                                             Edit
@@ -317,44 +317,44 @@ const EntityList = () => {
                     <h2 className="text-xl font-semibold mb-4">{currentEntity ? 'Edit Entity' : 'Add New Entity'}</h2>
                     <form onSubmit={handleAddOrEditEntity}>
                         <div className="form-group mb-4">
-                            <label htmlFor="name" className="block mb-2">Entity Name</label>
+                            <label htmlFor="name" className="block mb-2 text-black dark:text-white">Entity Name</label>
                             <input
                                 id="name"
                                 type="text"
                                 value={editingEntity.name}
                                 onChange={(e) => setEditingEntity({ ...editingEntity, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded px-3 py-2"
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-black dark:text-white"
                                 required
                             />
                         </div>
                         <div className="form-group mb-4">
-                            <label htmlFor="status" className="block mb-2">Status</label>
+                            <label htmlFor="status" className="block mb-2 text-black dark:text-white">Status</label>
                             <select
                                 id="status"
                                 value={editingEntity.status}
                                 onChange={(e) => setEditingEntity({ ...editingEntity, status: e.target.value })}
-                                className="w-full border border-gray-300 rounded px-3 py-2"
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-black dark:text-white"
                                 required
                             >
-                                <option value="">Select Status</option>
-                                <option value="ACTIVE">Active</option>
-                                <option value="PENDING">Pending</option>
-                                <option value="COMPLETED">Completed</option>
+                                <option className='text-black dark:text-white' value="">Select Status</option>
+                                <option className='text-black dark:text-white' value="ACTIVE">Active</option>
+                                <option className='text-black dark:text-white' value="PENDING">Pending</option>
+                                <option className='text-black dark:text-white' value="COMPLETED">Completed</option>
                             </select>
                         </div>
                         {!clientId && (
                             <div className="form-group mb-4">
-                                <label htmlFor="clientId" className="block mb-2">Client</label>
+                                <label htmlFor="clientId" className="block mb-2 text-black dark:text-white">Client</label>
                                 <select
                                     id="clientId"
                                     value={editingEntity.clientId}
                                     onChange={(e) => setEditingEntity({ ...editingEntity, clientId: e.target.value })}
-                                    className="w-full border border-gray-300 rounded px-3 py-2"
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-black dark:text-white"
                                     required
                                 >
                                     <option value="">Select Client</option>
                                     {clients.map(client => (
-                                        <option key={client.id} value={client.id}>
+                                        <option className='text-black dark:text-white' key={client.id} value={client.id}>
                                             {client.name}
                                         </option>
                                     ))}
@@ -372,14 +372,14 @@ const EntityList = () => {
                             >
                                 <option value="">Select Manager</option>
                                 {managers.map(manager => (
-                                    <option key={manager.id} value={manager.id}>
+                                    <option className='text-black dark:text-white' key={manager.id} value={manager.id}>
                                         {manager.firstName} {manager.lastName} ({manager.role})
                                     </option>
                                 ))}
                             </select>
                         </div>
                         <div className="modal-buttons flex justify-end space-x-2">
-                            <button type="button" className="btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" onClick={() => setShowModal(false)}>
+                            <button type="button" className="btn bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600" onClick={() => setShowModal(false)}>
                                 Cancel
                             </button>
                             <button type="submit" className="btn btn-view bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">

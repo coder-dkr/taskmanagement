@@ -108,28 +108,28 @@ const ManagerList = () => {
         {/* Header */}
         <div className="header flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800">
        
-            <h1 className="text-xl font-semibold dark:text-white">Managers</h1>
+            <h1 className="text-xl font-semibold  text-black dark:text-white">Managers</h1>
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="add-client-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                className="add-client-btn bg-green-500 text-white  px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
             >
                 Add Manager
             </button>
         </div>
     
         {/* Filter Section */}
-        <div className="filter-section flex items-center p-4 space-x-4 bg-gray-50 dark:bg-gray-700">
+        <div className="filter-section flex items-center p-4 space-x-4 bg-gray-50 dark:bg-gray-700 text-black dark:text-white">
             <input
                 type="text"
                 placeholder="Search managers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input w-full p-2 border border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                className="search-input w-full p-2 border border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white text-black"
             />
             <div className="filter-group flex items-center">
-                <label className="filter-label mr-2 dark:text-white">Role:</label>
+                <label className="filter-label mr-2 dark:text-white text-black">Role:</label>
                 <select
-                    className="filter-select border border-gray-300 rounded p-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                    className="filter-select border border-gray-300 rounded p-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white text-black"
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                 >
@@ -148,31 +148,31 @@ const ManagerList = () => {
             <table className="w-full table-auto">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                     <tr>
-                        <th className="px-4 py-2 text-left dark:text-white">ID</th>
-                        <th className="px-4 py-2 text-left dark:text-white">First Name</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Last Name</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Email</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Role</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Senior Manager</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Actions</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">ID</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">First Name</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Last Name</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Email</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Role</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Senior Manager</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {managers.length === 0 ? (
                         <tr>
-                            <td colSpan={7} className="px-4 py-2 text-center dark:text-white">
+                            <td colSpan={7} className="px-4 py-2 text-center dark:text-white text-black">
                                 No managers found
                             </td>
                         </tr>
                     ) : (
                         managers.map((manager) => (
                             <tr key={manager.id} className="border-b dark:border-gray-700">
-                                <td className="px-4 py-2 dark:text-white">{manager.id}</td>
-                                <td className="px-4 py-2 dark:text-white">{manager.firstName}</td>
-                                <td className="px-4 py-2 dark:text-white">{manager.lastName}</td>
-                                <td className="px-4 py-2 dark:text-white">{manager.email}</td>
-                                <td className="px-4 py-2 dark:text-white">{manager.role?.replace('_', ' ')}</td>
-                                <td className="px-4 py-2 dark:text-white">{manager.seniorManagerName || '-'}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.id}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.firstName}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.lastName}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.email}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.role?.replace('_', ' ')}</td>
+                                <td className="px-4 py-2 dark:text-white  text-black">{manager.seniorManagerName || '-'}</td>
                                 <td className="px-4 py-2">
                                     <div className="action-buttons flex space-x-2">
                                         <button
@@ -209,7 +209,7 @@ const ManagerList = () => {
         {selectedManager && (
             <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="modal-content edit-form bg-white dark:bg-gray-800 p-6 rounded-lg w-1/3">
-                    <h2 className="text-xl font-semibold mb-4 dark:text-white">Edit Manager</h2>
+                    <h2 className="text-xl font-semibold mb-4 dark:text-white text-black">Edit Manager</h2>
                     <form onSubmit={async (e) => {
                         e.preventDefault();
                         try {
@@ -225,26 +225,26 @@ const ManagerList = () => {
                             placeholder="First Name"
                             value={selectedManager.firstName}
                             onChange={(e) => setSelectedManager(prev => ({...prev, firstName: e.target.value}))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <input
                             type="text"
                             placeholder="Last Name"
                             value={selectedManager.lastName}
                             onChange={(e) => setSelectedManager(prev => ({...prev, lastName: e.target.value}))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <input
                             type="email"
                             placeholder="Email"
                             value={selectedManager.email}
                             onChange={(e) => setSelectedManager(prev => ({...prev, email: e.target.value}))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <select
                             value={selectedManager.role}
                             onChange={(e) => setSelectedManager(prev => ({...prev, role: e.target.value}))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         >
                             <option value="">Select Role</option>
                             {roles.map((role) => (
@@ -277,33 +277,33 @@ const ManagerList = () => {
         {isModalOpen && (
             <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="modal-content add-form bg-white dark:bg-gray-800 p-6 rounded-lg w-1/3">
-                    <h2 className="text-xl font-semibold mb-4 dark:text-white">Add Manager</h2>
+                    <h2 className="text-xl font-semibold mb-4 dark:text-white  text-black">Add Manager</h2>
                     <form onSubmit={handleAddManager}>
                         <input
                             type="text"
                             placeholder="First Name"
                             value={newManager.firstName}
                             onChange={(e) => setNewManager((prev) => ({ ...prev, firstName: e.target.value }))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <input
                             type="text"
                             placeholder="Last Name"
                             value={newManager.lastName}
                             onChange={(e) => setNewManager((prev) => ({ ...prev, lastName: e.target.value }))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <input
                             type="email"
                             placeholder="Email"
                             value={newManager.email}
                             onChange={(e) => setNewManager((prev) => ({ ...prev, email: e.target.value }))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         />
                         <select
                             value={newManager.role}
                             onChange={(e) => setNewManager((prev) => ({ ...prev, role: e.target.value }))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white  text-black"
                         >
                             <option value="">Select Role</option>
                             {roles.map((role) => (

@@ -676,11 +676,11 @@ const MondayStyleDashboard = () => {
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr className="w-full">
          
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Manager in Charge</th>
-              <th className="px-4 py-2 text-left">Due Date</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Actions</th>
+              <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Name</th>
+              <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Manager in Charge</th>
+              <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Due Date</th>
+              <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Status</th>
+              <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -699,15 +699,15 @@ const MondayStyleDashboard = () => {
                     className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleClientClick(client)}
                   >
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                       {expandedClients[client.id] ? (
                         <ChevronDown size={16} className="text-gray-600" />
                       ) : (
                         <Plus size={16} className="text-gray-600" />
                       )}
                     </td>
-                    <td className="px-4 py-2">{client.name}</td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">{client.name}</td>
+                    <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                       {entitiesMap[client.id]?.[0]?.managerFirstName}{' '}
                       {entitiesMap[client.id]?.[0]?.managerLastName}
                     </td>
@@ -741,18 +741,18 @@ const MondayStyleDashboard = () => {
                     entitiesMap[client.id]?.map((entity) => (
                       <React.Fragment key={entity.id}>
                         <tr
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer dark:bg-gray-600 text-black dark:text-white"
                           onClick={() => handleEntityClick(entity)}
                         >
-                          <td className="px-4 py-2 pl-8">
+                          <td className="px-4 py-2 pl-8 dark:bg-gray-600 text-black dark:text-white">
                             {expandedEntities[entity.id] ? (
                               <ChevronDown size={16} className="text-gray-600" />
                             ) : (
                               <Plus size={16} className="text-gray-600" />
                             )}
                           </td>
-                          <td className="px-4 py-2">{entity.name}</td>
-                          <td className="px-4 py-2">
+                          <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">{entity.name}</td>
+                          <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                             {entity.managerFirstName} {entity.managerLastName}
                           </td>
                           <td className="px-4 py-2"></td>
@@ -785,15 +785,15 @@ const MondayStyleDashboard = () => {
                           tasksMap[entity.id]?.map((task) => (
                             <tr
                               key={task.id}
-                              className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                              className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-600 text-black dark:text-white"
                             >
                               <td className="px-4 py-2 pl-16"></td>
-                              <td className="px-4 py-2">{task.name}</td>
-                              <td className="px-4 py-2">
+                              <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">{task.name}</td>
+                              <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                                 {task.assignedManagerFirstName}{' '}
                                 {task.assignedManagerLastName}
                               </td>
-                              <td className="px-4 py-2">
+                              <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                                 <input
                                   type="date"
                                   value={
@@ -833,10 +833,10 @@ const MondayStyleDashboard = () => {
                                       );
                                     }
                                   }}
-                                  className="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-500"
+                                  className="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-600 text-black dark:text-white"
                                 />
                               </td>
-                              <td className="px-4 py-2">
+                              <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white ">
                                 <StatusDropdown
                                   currentStatus={task.taskStatus}
                                   onStatusChange={(newStatus) =>
@@ -848,7 +848,7 @@ const MondayStyleDashboard = () => {
                                   }
                                 />
                               </td>
-                              <td className="px-4 py-2">
+                              <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                                 <div className="flex items-center gap-2">
                                   <button
                                     className="flex items-center gap-1 text-gray-600 hover:text-gray-800"

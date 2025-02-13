@@ -111,7 +111,7 @@ const ClientList = () => {
         <div className="container bg-white dark:bg-black min-h-screen transition-colors duration-300">
     {/* Header */}
     <div className="header flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800">
-        <h1 className="text-xl font-semibold dark:text-white">Clients</h1>
+        <h1 className="text-xl font-semibold dark:text-white  text-black">Clients</h1>
         <button
             onClick={() => {
                 setCurrentClient(null);
@@ -131,7 +131,7 @@ const ClientList = () => {
         placeholder="Search Clients..."
         value={searchQuery}
         onChange={handleSearch}
-        className="search-input w-full p-2 border border-gray-300 rounded mt-4 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        className="search-input w-full p-2 border border-gray-300 rounded mt-4 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
     />
 
     {/* Pagination */}
@@ -139,15 +139,15 @@ const ClientList = () => {
         <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="btn bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
+            className="btn bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-white text-black dark:hover:bg-gray-700"
         >
             <ChevronLeft />
         </button>
-        <span className="dark:text-white">Page {totalPages !== 0 ? currentPage  : 0} of {totalPages}</span>
+        <span className="dark:text-white  text-black">Page {totalPages !== 0 ? currentPage  : 0} of {totalPages}</span>
         <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="btn bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
+            className="btn bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-600 text-black dark:text-white dark:hover:bg-gray-700"
         >
             <ChevronRight />
         </button>
@@ -159,20 +159,20 @@ const ClientList = () => {
             <table className="w-full table-auto">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                     <tr>
-                        <th className="px-4 py-2 text-left dark:text-white">ID</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Name</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Sector</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Email</th>
-                        <th className="px-4 py-2 text-left dark:text-white">Actions</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">ID</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Name</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Sector</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Email</th>
+                        <th className="px-4 py-2 text-left dark:text-white text-black">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {filteredClients.map((client) => (
                         <tr key={client.id} className="border-b dark:border-gray-700">
-                            <td className="px-4 py-2 dark:text-white">{client.id}</td>
-                            <td className="px-4 py-2 dark:text-white">{client.name}</td>
-                            <td className="px-4 py-2 dark:text-white">{client.sector}</td>
-                            <td className="px-4 py-2 dark:text-white">{client.email}</td>
+                            <td className="px-4 py-2 dark:text-white text-black">{client.id}</td>
+                            <td className="px-4 py-2 dark:text-white text-black">{client.name}</td>
+                            <td className="px-4 py-2 dark:text-white text-black">{client.sector}</td>
+                            <td className="px-4 py-2 dark:text-white text-black">{client.email}</td>
                             <td className="px-4 py-2">
                                 <div className="action-buttons flex space-x-2">
                                     <button
@@ -188,7 +188,7 @@ const ClientList = () => {
                                             setEmailError('');
                                             setShowModal(true);
                                         }}
-                                        className="btn btn-edit bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700"
+                                        className="btn btn-edit bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700"
                                     >
                                         Edit
                                     </button>
@@ -220,28 +220,28 @@ const ClientList = () => {
     {showModal && (
         <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="modal-content add-form bg-white dark:bg-gray-800 p-6 rounded-lg w-1/3">
-                <h2 className="text-xl font-semibold mb-4 dark:text-white">
+                <h2 className="text-xl font-semibold mb-4 dark:text-white text-black">
                     {currentClient ? 'Edit Client' : 'Add New Client'}
                 </h2>
                 <form onSubmit={handleAddOrEditClient}>
                     <div className="form-group mb-4">
-                        <label htmlFor="name" className="block mb-2 dark:text-white">Client Name</label>
+                        <label htmlFor="name" className="block mb-2 dark:text-white text-black">Client Name</label>
                         <input
                             id="name"
                             type="text"
                             value={newClient.name}
                             onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
                             required
                         />
                     </div>
                     <div className="form-group mb-4">
-                        <label htmlFor="sector" className="block mb-2 dark:text-white">Sector</label>
+                        <label htmlFor="sector" className="block mb-2 dark:text-white text-black">Sector</label>
                         <select
                             id="sector"
                             value={newClient.sector}
                             onChange={(e) => setNewClient({ ...newClient, sector: e.target.value })}
-                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
                             required
                         >
                             <option value="">Select Sector</option>
@@ -253,13 +253,13 @@ const ClientList = () => {
                         </select>
                     </div>
                     <div className="form-group mb-4">
-                        <label htmlFor="email" className="block mb-2 dark:text-white">Email</label>
+                        <label htmlFor="email" className="block mb-2 dark:text-white text-black">Email</label>
                         <input
                             id="email"
                             type="email"
                             value={newClient.email}
                             onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full border border-gray-300 rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
                             required
                         />
                         {emailError && <span className="error-message text-red-500 dark:text-red-400">{emailError}</span>}
