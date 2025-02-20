@@ -24,6 +24,7 @@ import taskService from "@/services/taskService";
 import managerService from "@/services/managerService";
 import {RotateCcw} from 'lucide-react'
 import StatusDropdown from "@/components/StatusDropdown";
+import { TaskTemplateButton } from "@/components/ui/task-template-button";
 
 const MondayStyleDashboard = () => {
   const [clients, setClients] = useState([]);
@@ -58,6 +59,8 @@ const MondayStyleDashboard = () => {
   const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [isProvision, setIsProvision] = useState(false);
+
 
   useEffect(() => {
     loadInitialData();
@@ -155,6 +158,8 @@ const MondayStyleDashboard = () => {
 
   const handleEntityClick = async (entity) => {
     const entityId = entity.id;
+    setContextEntityId(entityId);
+    setEntityName(entity.name);
     setExpandedEntities((prev) => ({
       ...prev,
       [entityId]: !prev[entityId],
@@ -380,6 +385,7 @@ const MondayStyleDashboard = () => {
       assignedManagerId,
       entityId: contextEntityId,
       taskStatus: "PENDING",
+      isProvision: isProvision
     };
 
     try {
@@ -396,7 +402,7 @@ const MondayStyleDashboard = () => {
       setIsTaskFormOpen(false);
 
       toast ({
-        title : "error",
+        title : "success",
         description : "Task created successfully"
       })
 
@@ -635,6 +641,13 @@ const MondayStyleDashboard = () => {
         >
           New Task <ChevronDown size={16} />
         </button>
+        <TaskTemplateButton
+    contextEntityId={contextEntityId}
+    entityName={entityName}
+    managers={managers}
+    onTaskCreated={loadInitialData}
+    />
+    
 
         <div className="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1">
           <Search size={16} className="mr-2" />
@@ -1061,6 +1074,19 @@ const MondayStyleDashboard = () => {
                   ))}
                 </select>
               </div>
+              <div className="flex items-center space-x-2 mt-4">
+  <input
+    id="isProvision"
+    type="checkbox"
+    checked={isProvision}
+    onChange={(e) => setIsProvision(e.target.checked)}
+    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+  />
+  <label htmlFor="isProvision" className="text-sm font-medium">
+    Is Provision Task
+  </label>
+</div>
+
               <div className="flex justify-end gap-2">
                 <button
                   type="submit"
