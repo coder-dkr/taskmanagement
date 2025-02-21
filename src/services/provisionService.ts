@@ -15,7 +15,7 @@ interface ProvisionTask {
     isProvision: boolean;
 }
 
-const API_URL = '/api/tasks';
+const API_URL = '/api/tasks/provision';
 
 const axiosInstance = axios.create({
     baseURL: API_URL,

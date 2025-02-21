@@ -6,9 +6,8 @@ import { Navigation } from "@/components/Navigation";
 import { TopBar } from "@/components/TopBar";
 import Joyride from 'react-joyride';
 import { useOnboarding } from "@/hooks/useOnboarding";
-import { TaskProvider } from "@/contexts/TaskContext";
 import {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions} from '@/pages'
-
+import { MondayDataProvider } from "./contexts/MondayDataContext";
 
 function Router() {
   const { isOpen, steps, handleJoyrideCallback } = useOnboarding();
@@ -56,9 +55,9 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TaskProvider>
+      <MondayDataProvider>
         <Router />
-      </TaskProvider>
+      </MondayDataProvider>
     </QueryClientProvider>
   );
 }

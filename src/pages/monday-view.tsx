@@ -25,6 +25,7 @@ import managerService from "@/services/managerService";
 import {RotateCcw} from 'lucide-react'
 import StatusDropdown from "@/components/StatusDropdown";
 import { TaskTemplateButton } from "@/components/ui/task-template-button";
+import useMondayData from "@/hooks/useMondayData";
 
 const MondayStyleDashboard = () => {
   const [clients, setClients] = useState([]);
@@ -61,9 +62,25 @@ const MondayStyleDashboard = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [isProvision, setIsProvision] = useState(false);
 
+  const {
+    clientsPreload,
+    managersPreload,
+    entitiesMapPreload,
+    expandedClientsPreload,
+    expandedEntitiesPreload,
+    tasksMapPreload,
+    setmakeCall
+  } = useMondayData()
 
   useEffect(() => {
-    loadInitialData();
+
+    setClients(clientsPreload || []);
+    setManagers(managersPreload || []);
+    setEntitiesMap(entitiesMapPreload);
+    setExpandedClients(expandedClientsPreload);
+    setExpandedEntities(expandedEntitiesPreload);
+    setTasksMap(tasksMapPreload);
+
   }, []);
 
   useEffect(() => {
@@ -84,7 +101,7 @@ const MondayStyleDashboard = () => {
     }
   }, [contextEntityId, isTaskFormOpen]);
 
-  const loadInitialData = async () => {
+  const loadInitialDataInMondayInMonday = async () => {
     try {
       setLoading(true);
       const [clientsData, managersData] = await Promise.all([
@@ -125,6 +142,7 @@ const MondayStyleDashboard = () => {
       })
     } finally {
       setLoading(false);
+      setmakeCall(true)
     }
   };
 
@@ -200,7 +218,7 @@ const MondayStyleDashboard = () => {
     ) {
       try {
         await entityService.deleteEntity(entity.id);
-        await loadInitialData();
+        await loadInitialDataInMonday();
         
         toast ({
           title : "success",
@@ -314,7 +332,7 @@ const MondayStyleDashboard = () => {
     e.preventDefault();
     try {
       await entityService.updateEntity(editingEntity.id, editingEntity);
-      await loadInitialData();
+      await loadInitialDataInMonday();
       setIsEditEntityModalOpen(false);
 
 
@@ -335,7 +353,7 @@ const MondayStyleDashboard = () => {
     try {
       setLoading(true);
       if (!term.trim()) {
-        await loadInitialData();
+        await loadInitialDataInMonday();
         return;
       }
 
@@ -479,7 +497,7 @@ const MondayStyleDashboard = () => {
 
       // If no manager selected, load all data
       if (!managerId) {
-        await loadInitialData();
+        await loadInitialDataInMonday();
         return;
       }
 
@@ -559,7 +577,7 @@ const MondayStyleDashboard = () => {
       clientService
         .deleteClient(client.id)
         .then(() => {
-          loadInitialData();
+          loadInitialDataInMonday();
           
           toast ({
             title : "error",
@@ -645,7 +663,7 @@ const MondayStyleDashboard = () => {
     contextEntityId={contextEntityId}
     entityName={entityName}
     managers={managers}
-    onTaskCreated={loadInitialData}
+    onTaskCreated={loadInitialDataInMonday}
     />
     
 
@@ -964,7 +982,7 @@ const MondayStyleDashboard = () => {
               </button>
               <button
                 onClick={() => {
-                  loadInitialData();
+                  loadInitialDataInMonday();
                   setIsDateFilterOpen(false);
                 }}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
