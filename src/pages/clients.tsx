@@ -6,6 +6,7 @@ import { clientService } from '@/services/clientService';
 import { exportClientsList } from '@/services/exportService';
 import { debounce } from '@/lib/debounce';
 import { ChevronLeft , ChevronRight } from 'lucide-react';
+import ExportButton from '@/components/ui/ExportButton';
 
 
 const ClientList = () => {
@@ -112,16 +113,9 @@ const ClientList = () => {
         <div className="container bg-white dark:bg-black min-h-screen transition-colors duration-300">
     {/* Header */}
     <div className="header flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800">
-        <h1 className="text-xl font-semibold dark:text-white  text-black">Clients</h1>
-        <button
-            onClick={exportClientsList}
-            className="text-white px-4 py-2 rounded bg-gray-800 dark:bg-gray-600"
-
-        >
-            Export list
-        </button>
-        
-    </div>
+    <h1 className="text-xl font-semibold dark:text-white text-black">Clients</h1>
+    <ExportButton onClick={exportClientsList} />
+</div>
     <button
             onClick={() => {
                 setCurrentClient(null);

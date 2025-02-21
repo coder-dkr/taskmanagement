@@ -1,6 +1,20 @@
 import axios from 'axios';
 import { toast } from '@/hooks/useToast';
 
+interface ProvisionTask {
+    id: number;
+    name: string;
+    description: string;
+    taskStatus: string;
+    dueDate: string;
+    entityId: number;
+    assignedManagerId: number;
+    assignedManagerFirstName?: string;
+    assignedManagerLastName?: string;
+    comment?: string;
+    isProvision: boolean;
+}
+
 const API_URL = '/api/tasks';
 
 const axiosInstance = axios.create({
@@ -37,15 +51,14 @@ axiosInstance.interceptors.response.use(
                     break;
                 default:
                     errorMessage = error.response.data.message || 'Server error occurred';
-                    break;
             }
         } else if (error.request) {
             errorMessage = 'No response from server. Please check your connection.';
         }
         toast({
             title: "Error",
-            description:errorMessage,
-          });
+            description: errorMessage,
+        });
         return Promise.reject(new Error(errorMessage));
     }
 );
@@ -53,7 +66,7 @@ axiosInstance.interceptors.response.use(
 const provisionService = {
     getAllProvisionTasks: async () => {
         try {
-            const response = await axiosInstance.get('/provision');
+            const response = await axiosInstance.get<ProvisionTask[]>('/provision');
             return response.data;
         } catch (error) {
             console.error('Error fetching all provision tasks:', error);
@@ -61,9 +74,9 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByEntity: async (entityId : any) => {
+    getProvisionTasksByEntity: async (entityId: string | number) => {
         try {
-            const response = await axiosInstance.get(`/provision/entity/${entityId}`);
+            const response = await axiosInstance.get<ProvisionTask[]>(`/provision/entity/${entityId}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching provision tasks for entity ${entityId}:`, error);
@@ -71,9 +84,9 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByClient: async (clientId: any) => {
+    getProvisionTasksByClient: async (clientId: string | number) => {
         try {
-            const response = await axiosInstance.get(`/provision/client/${clientId}`);
+            const response = await axiosInstance.get<ProvisionTask[]>(`/provision/client/${clientId}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching provision tasks for client ${clientId}:`, error);
@@ -81,9 +94,9 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByManager: async (managerId: any) => {
+    getProvisionTasksByManager: async (managerId: string | number) => {
         try {
-            const response = await axiosInstance.get(`/provision/manager/${managerId}`);
+            const response = await axiosInstance.get<ProvisionTask[]>(`/provision/manager/${managerId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching provision tasks by manager:', error);
@@ -91,9 +104,9 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksByStatus: async (status: any) => {
+    getProvisionTasksByStatus: async (status: string) => {
         try {
-            const response = await axiosInstance.get(`/provision/status/${status}`);
+            const response = await axiosInstance.get<ProvisionTask[]>(`/provision/status/${status}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching provision tasks by status:', error);
@@ -101,13 +114,10 @@ const provisionService = {
         }
     },
 
-    getProvisionTasksBetweenDates: async (startDate: any, endDate: any) => {
+    getProvisionTasksBetweenDates: async (startDate: string, endDate: string) => {
         try {
-            const response = await axiosInstance.get('/provision/dates', {
-                params: {
-                    startDate,
-                    endDate
-                }
+            const response = await axiosInstance.get<ProvisionTask[]>('/provision/dates', {
+                params: { startDate, endDate }
             });
             return response.data;
         } catch (error) {
@@ -116,9 +126,9 @@ const provisionService = {
         }
     },
 
-    hasProvisionTasks: async (entityId: any) => {
+    hasProvisionTasks: async (entityId: string | number) => {
         try {
-            const response = await axiosInstance.get(`/provision/check/${entityId}`);
+            const response = await axiosInstance.get<boolean>(`/provision/check/${entityId}`);
             return response.data;
         } catch (error) {
             console.error('Error checking provision tasks:', error);
@@ -126,48 +136,19 @@ const provisionService = {
         }
     },
 
-    // Reuse the task update and delete methods from the original service
-    updateTask: async (taskId: any, taskData: any) => {
+    updateTask: async (taskId: string | number, taskData: Partial<ProvisionTask>) => {
         try {
-            const updatePayload = {
-                id: taskId,
-                name: taskData.name,
-                description: taskData.description,
-                taskStatus: taskData.taskStatus,
-                dueDate: taskData.dueDate,
-                entityId: taskData.entityId,
-                assignedManagerId: taskData.assignedManagerId,
-                comment: taskData.comment
-            };
-
-            const response = await axiosInstance.put(`/provision/${taskId}`, updatePayload);
-
-            if (!response.data.comment && taskData.comment) {
-                const commentUpdateResponse = await axiosInstance.put(`/provision/${taskId}`, {
-                    ...response.data,
-                    comment: taskData.comment
-                });
-                return commentUpdateResponse.data;
-            }
-
+            const response = await axiosInstance.put<ProvisionTask>(`/provision/${taskId}`, taskData);
             return response.data;
         } catch (error) {
             console.error(`Error updating provision task ${taskId}:`, error);
-            toast({
-                title: "Error",
-                description:'Failed to update provision task',
-              });
             throw error;
         }
     },
 
-    updateTaskStatus: async (taskId: any, status: any) => {
+    updateTaskStatus: async (taskId: string | number, status: string) => {
         try {
-            const response = await axiosInstance.patch(`/provision/${taskId}/status`, { status });
-            toast({
-                title: "success",
-                description:'Provision task status updated successfully',
-              });
+            const response = await axiosInstance.patch<ProvisionTask>(`/provision/${taskId}/status`, { status });
             return response.data;
         } catch (error) {
             console.error(`Error updating status for provision task ${taskId}:`, error);

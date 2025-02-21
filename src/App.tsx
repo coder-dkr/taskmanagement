@@ -38,6 +38,7 @@ function Router() {
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/clients" component={Clients} />
+            <Route path="/clients/:clientId/entities" component={entities} />
             <Route path="/entities" component={entities} />
             <Route path="/managers" component={managers}/>
             <Route path="/tasks" component={Tasks}/>

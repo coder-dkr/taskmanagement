@@ -4,6 +4,15 @@ import entityService from './entityService';
 
 const API_URL = '/api/tasks';
 
+// Define interfaces for type safety
+interface CreateTasksFromTemplatesRequest {
+  selectedTasks: Array<{
+    taskTemplateId: number;
+    managerId: number;
+    dueDate: string;
+  }>;
+}
+
 const axiosInstance = axios.create({
     baseURL: API_URL,
     headers: {
@@ -65,40 +74,22 @@ const taskService = {
             throw error;
         }
     },
-
-    createTasksFromTemplates: async (entityId:any, data:any) => {
-        try {
-            if (!data.selectedTasks || !Array.isArray(data.selectedTasks)) {
-                throw new Error('Invalid selectedTasks format');
-            }
-
-            const manager = await entityService.getManagerForEntity(entityId);
-
-            const formattedData = {
-                managerId: manager.id,
-                selectedTasks: data.selectedTasks.map((task:any) => ({
-                    taskTemplateId: Number(task.taskTemplateId),
-                    dueDate: task.dueDate
-                }))
-            };
-
-            console.log('Sending formatted payload:', JSON.stringify(formattedData, null, 2));
-
-            const response = await axiosInstance.post(
-                `/entity/${entityId}/create-from-templates`,
-                formattedData
-            );
-
-            toast({
-                title: "Success",
-                description:'Tasks created successfully from templates',
-              });
-            return response.data;
-        } catch (error) {
-            console.error('Error creating tasks from templates:', error);
-            throw error;
-        }
-    },
+   // In taskService.ts
+createTasksFromTemplates: async (entityId: number, data: CreateTasksFromTemplatesRequest) => {
+    try {
+        console.log('Service creating tasks for entity:', entityId);
+        console.log('Service data:', data);
+        
+        const response = await axiosInstance.post(
+            `/entity/${entityId}/create-from-templates`,
+            data
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error('Service error:', error.response || error);
+        throw new Error(error.response?.data?.message || 'Internal server error. Please try again later.');
+    }
+},
 
    getAllTasks: async () => {
        try {
@@ -203,16 +194,41 @@ const taskService = {
         }
     },
 
-    updateTaskStatus: async (taskId :any, status:any) => {
+    updateTaskStatus: async (taskId: any, status: any) => {
         try {
-            const response = await axiosInstance.patch(`/${taskId}/status`, { status });
+            console.log(`[STATUS UPDATE] Attempting to update task ${taskId} to status: ${status}`);
+            
+            // Get current task state
+            const currentTask = await taskService.getTaskById(taskId);
+            console.log(`[STATUS UPDATE] Current task state:`, currentTask);
+            
+            // Create update payload
+            const updatePayload = {
+                ...currentTask,
+                taskStatus: status
+            };
+            console.log(`[STATUS UPDATE] Sending payload:`, updatePayload);
+            
+            // Make the update request
+            const response = await axiosInstance.put(`/${taskId}`, updatePayload);
+            console.log(`[STATUS UPDATE] Server response:`, response.data);
+            
+            // Verify the update by fetching the task again
+            setTimeout(async () => {
+                const updatedTask = await taskService.getTaskById(taskId);
+                console.log(`[STATUS UPDATE] Verification fetch result:`, updatedTask);
+                if (updatedTask.taskStatus !== status) {
+                    console.error(`[STATUS UPDATE] Verification failed! Status still shows as: ${updatedTask.taskStatus}`);
+                }
+            }, 1000);
+            
             toast({
                 title: "success",
-                description:'Task status updated successfully',
-              });
+                description: 'Task status updated successfully',
+            });
             return response.data;
         } catch (error) {
-            console.error(`Error updating status for task ${taskId}:`, error);
+            console.error(`[STATUS UPDATE] Error updating status for task ${taskId}:`, error);
             throw error;
         }
     },
