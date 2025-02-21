@@ -4,8 +4,8 @@ import axios from "axios";
 
 export const getClientsCount = async (): Promise<number> => {
   try {
-    const response = await axios.get<{ count: number }>("/api/clients/count");
-    return response.data.count;
+    const response = await axios.get("/api/clients/count");
+    return response.data;
   } catch (error) {
     console.error("Error fetching clients count:", error);
     return 0; 
