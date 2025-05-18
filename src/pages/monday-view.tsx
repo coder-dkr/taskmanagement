@@ -80,6 +80,7 @@ const MondayStyleDashboard = () => {
     setExpandedClients(expandedClientsPreload);
     setExpandedEntities(expandedEntitiesPreload);
     setTasksMap(tasksMapPreload);
+    setLoading(false);
 
   }, []);
 
@@ -101,7 +102,7 @@ const MondayStyleDashboard = () => {
     }
   }, [contextEntityId, isTaskFormOpen]);
 
-  const loadInitialDataInMondayInMonday = async () => {
+  const loadInitialDataInMonday = async () => {
     try {
       setLoading(true);
       const [clientsData, managersData] = await Promise.all([
@@ -121,7 +122,6 @@ const MondayStyleDashboard = () => {
               `Error loading entities for client ${client.id}:`,
               entityError
             );
-            // Continue with other clients even if one fails
             newEntitiesMap[client.id] = [];
           }
         })
@@ -133,6 +133,7 @@ const MondayStyleDashboard = () => {
       setExpandedClients({});
       setExpandedEntities({});
       setTasksMap({});
+     
     } catch (error) {
       console.error("Error:", error);
 

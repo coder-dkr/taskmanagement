@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Users, Building2, CheckSquare, BarChart2 } from "lucide-react";
-import { getClientsCount, getEntitiesCount } from "../services/statsService";
+import { getClientsCount, getEntitiesCount,getTasksCount } from "../services/statsService";
+
+
+
 
 export function Overview() {
   const [clientsCount, setClientsCount] = useState<number | null>(null);
   const [entitiesCount, setEntitiesCount] = useState<number | null>(null);
+  const [tasksCount, setTasksCount] = useState<number | null>(null);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
       const clients = await getClientsCount();
       const entities = await getEntitiesCount();
+      const tasks = await getTasksCount();
       setClientsCount(clients);
       setEntitiesCount(entities);
+      setTasksCount(tasks);
     };
 
     fetchData();
@@ -33,7 +41,7 @@ export function Overview() {
     },
     {
       label: "Total Tasks",
-      value: "Loading...", 
+      value: tasksCount !== null ? tasksCount : "Loading...",
       icon: CheckSquare,
       color: "text-purple-500"
     },

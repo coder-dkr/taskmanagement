@@ -21,3 +21,12 @@ export const getEntitiesCount = async () => {
     return 0; 
   }
 };
+export const getTasksCount = async () => {
+  try {
+    const response = await axios.get("/api/tasks/count");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tasks count:", error);
+    return 0; 
+  }
+};

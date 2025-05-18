@@ -15,14 +15,25 @@ interface ProvisionTask {
     isProvision: boolean;
 }
 
-const API_URL = '/api/tasks/provision';
+const API_URL = '/api/tasks';
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
     headers: {
+      'Accept': 'application/json',  
         'Content-Type': 'application/json'
     }
 });
+axiosInstance.interceptors.request.use(request => {
+    console.log('Making request to:', (request.baseURL ?? '') + request.url);
+    console.log('Request headers:', request.headers);
+    return request;
+});
+axiosInstance.interceptors.response.use(
+    (response) => {
+        console.log('Full response:', response);  // Add this log
+        return response;
+    });
 
 axiosInstance.interceptors.response.use(
     (response) => response,
@@ -67,6 +78,7 @@ const provisionService = {
     getAllProvisionTasks: async () => {
         try {
             const response = await axiosInstance.get<ProvisionTask[]>('/provision');
+            console.log('Response:', response.data); 
             return response.data;
         } catch (error) {
             console.error('Error fetching all provision tasks:', error);
@@ -146,6 +158,20 @@ const provisionService = {
         }
     },
 
+    
+    deleteTask: async (id: any) => {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete task');
+            }
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            throw error;
+        }
+    },
     updateTaskStatus: async (taskId: string | number, status: string) => {
         try {
             const response = await axiosInstance.patch<ProvisionTask>(`/provision/${taskId}/status`, { status });
