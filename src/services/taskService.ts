@@ -1,9 +1,6 @@
-import axios from 'axios';
+import axiosInstance from '@/lib/axios';
 import { toast } from '@/hooks/useToast'
 import entityService from './entityService';
-
-const API_URL = import.meta.env.VITE_API_URL;
-const BASE_URL = `${API_URL}/api/tasks`;
 
 // Define interfaces for type safety
 interface CreateTasksFromTemplatesRequest {
@@ -14,58 +11,10 @@ interface CreateTasksFromTemplatesRequest {
   }>;
 }
 
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-  headers: { 'Content-Type': 'application/json' }
-});
-
-
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    let errorMessage = 'An unexpected error occurred';
-
-    if (error.response) {
-      errorMessage = error.response.data.message || 'Server error occurred';
-      switch (error.response.status) {
-        case 400:
-          errorMessage = 'Invalid request. Please check your data.';
-          break;
-        case 401:
-          errorMessage = 'Unauthorized. Please log in again.';
-          break;
-        case 403:
-          errorMessage = 'You do not have permission to perform this action.';
-          break;
-        case 404:
-          errorMessage = 'The requested resource was not found.';
-          break;
-        case 409:
-          errorMessage = 'This operation caused a conflict.';
-          break;
-        case 500:
-          errorMessage = 'Internal server error. Please try again later.';
-          break;
-        default:
-          errorMessage = error.response.data.message || 'Server error occurred';
-          break;
-      }
-    } else if (error.request) {
-      errorMessage = 'No response from server. Please check your connection.';
-    }
-
-    toast({
-      title: "Error",
-      description: errorMessage,
-    });
-    return Promise.reject(new Error(errorMessage));
-  }
-);
-
 const taskService = {
   getTaskTemplates: async () => {
     try {
-      const response = await axiosInstance.get('/templates');
+      const response = await axiosInstance.get('/api/tasks/templates');
       console.log('Templates response:', response.data);
       return response.data;
     } catch (error) {
@@ -80,7 +29,7 @@ const taskService = {
       console.log('Service data:', data);
 
       const response = await axiosInstance.post(
-        `/entity/${entityId}/create-from-templates`,
+        `/api/tasks/entity/${entityId}/create-from-templates`,
         data
       );
       return response.data;
@@ -92,7 +41,7 @@ const taskService = {
 
   getAllTasks: async () => {
     try {
-      const response = await axiosInstance.get('');
+      const response = await axiosInstance.get('/api/tasks');
       return response.data;
     } catch (error) {
       console.error('Error fetching all tasks:', error);
@@ -102,7 +51,7 @@ const taskService = {
 
   getActiveTasks: async () => {
     try {
-      const response = await axiosInstance.get('');
+      const response = await axiosInstance.get('/api/tasks');
       const allTasks = response.data;
 
       // Filter out completed tasks from the main view
@@ -119,7 +68,7 @@ const taskService = {
 
   getCompletedTasks: async () => {
     try {
-      const response = await axiosInstance.get('/status/COMPLETED');
+      const response = await axiosInstance.get('/api/tasks/status/COMPLETED');
       return response.data;
     } catch (error) {
       console.error('Error fetching completed tasks:', error);
@@ -129,7 +78,7 @@ const taskService = {
 
   getTaskById: async (taskId: any) => {
     try {
-      const response = await axiosInstance.get(`/${taskId}`);
+      const response = await axiosInstance.get(`/api/tasks/${taskId}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching task ${taskId}:`, error);
@@ -139,7 +88,7 @@ const taskService = {
 
   getTasksByEntity: async (entityId: any) => {
     try {
-      const response = await axiosInstance.get(`/entity/${entityId}`);
+      const response = await axiosInstance.get(`/api/tasks/entity/${entityId}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching tasks for entity ${entityId}:`, error);
@@ -150,7 +99,7 @@ const taskService = {
   createTask: async (taskData: any) => {
     console.log("Sending task data:", taskData);
     try {
-      const response = await axiosInstance.post('', taskData);
+      const response = await axiosInstance.post('/api/tasks', taskData);
       toast({
         title: "success",
         description: 'Task created successfully',
@@ -177,10 +126,10 @@ const taskService = {
 
       console.log('Sending update request with payload:', updatePayload);
 
-      const response = await axiosInstance.put(`/${taskId}`, updatePayload);
+      const response = await axiosInstance.put(`/api/tasks/${taskId}`, updatePayload);
 
       if (!response.data.comment && taskData.comment) {
-        const commentUpdateResponse = await axiosInstance.put(`/${taskId}`, {
+        const commentUpdateResponse = await axiosInstance.put(`/api/tasks/${taskId}`, {
           ...response.data,
           comment: taskData.comment
         });
@@ -200,7 +149,7 @@ const taskService = {
 
   deleteTask: async (taskId: any) => {
     try {
-      await axiosInstance.delete(`/${taskId}`);
+      await axiosInstance.delete(`/api/tasks/${taskId}`);
       toast({
         title: "success",
         description: 'Task deleted successfully',
@@ -213,7 +162,7 @@ const taskService = {
 
   getTaskStatuses: async () => {
     try {
-      const response = await axiosInstance.get('/statuses');
+      const response = await axiosInstance.get('/api/tasks/statuses');
       return response.data;
     } catch (error) {
       console.error('Error fetching statuses:', error);
@@ -234,7 +183,7 @@ const taskService = {
       };
       console.log(`[STATUS UPDATE] Sending payload:`, updatePayload);
 
-      const response = await axiosInstance.put(`/${taskId}`, updatePayload);
+      const response = await axiosInstance.put(`/api/tasks/${taskId}`, updatePayload);
       console.log(`[STATUS UPDATE] Server response:`, response.data);
 
       setTimeout(async () => {
@@ -258,7 +207,7 @@ const taskService = {
 
   getTaskStatistics: async () => {
     try {
-      const response = await axiosInstance.get('/statistics');
+      const response = await axiosInstance.get('/api/tasks/statistics');
       return response.data;
     } catch (error) {
       console.error('Error fetching task statistics:', error);
@@ -268,7 +217,7 @@ const taskService = {
 
   getOverdueTasks: async () => {
     try {
-      const response = await axiosInstance.get('/overdue');
+      const response = await axiosInstance.get('/api/tasks/overdue');
       return response.data;
     } catch (error) {
       console.error('Error fetching overdue tasks:', error);
@@ -278,7 +227,7 @@ const taskService = {
 
   getTasksByStatus: async (status: any) => {
     try {
-      const response = await axiosInstance.get(`/status/${status}`);
+      const response = await axiosInstance.get(`/api/tasks/status/${status}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching tasks by status:', error);
@@ -288,7 +237,7 @@ const taskService = {
 
   getTasksByDate: async (date: any) => {
     try {
-      const response = await axiosInstance.get(`/due-date/${date}`);
+      const response = await axiosInstance.get(`/api/tasks/due-date/${date}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching tasks by date:', error);
@@ -299,7 +248,7 @@ const taskService = {
   getTasksByDateRange: async (endDate: any) => {
     try {
       const startDate = new Date().toISOString().split('T')[0];
-      const response = await axiosInstance.get('/date-range', {
+      const response = await axiosInstance.get('/api/tasks/date-range', {
         params: {
           startDate: startDate,
           endDate: endDate
@@ -314,7 +263,7 @@ const taskService = {
 
   searchTasks: async (searchTerm: any) => {
     try {
-      const response = await axiosInstance.get('/search', {
+      const response = await axiosInstance.get('/api/tasks/search', {
         params: { query: searchTerm }
       });
       return response.data;
@@ -326,7 +275,7 @@ const taskService = {
 
   getTasksBetweenDates: async (startDate: any, endDate: any) => {
     try {
-      const response = await axios.get(`${API_URL}/date-range`, {
+      const response = await axiosInstance.get('/api/tasks/date-range', {
         params: { startDate, endDate }
       });
       return response.data;
@@ -338,7 +287,7 @@ const taskService = {
 
   getTasksByManager: async (managerId: any) => {
     try {
-      const response = await axiosInstance.get(`/manager/${managerId}`);
+      const response = await axiosInstance.get(`/api/tasks/manager/${managerId}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching tasks by manager:', error);

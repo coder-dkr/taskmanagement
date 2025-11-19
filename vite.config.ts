@@ -22,13 +22,6 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://10.120.190.19:9000',
-        changeOrigin: true,
-        rewrite: (path) => path
-      }
-    }
+    port: 5173
   },
 });

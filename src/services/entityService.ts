@@ -1,13 +1,10 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL;
-const API_BASE_URL = `${API_URL}/entities`;
+import axiosInstance from '@/lib/axios';
 
 const entityService = {
     // Get manager for entity
     getManagerForEntity: async (entityId : any) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/${entityId}/manager`);
+            const response = await axiosInstance.get(`/entities/${entityId}/manager`);
             return response.data;
         } catch (error) {
             console.error('Error fetching manager for entity:', error);
@@ -18,7 +15,7 @@ const entityService = {
     // Fetch all entities
     getAllEntities: async () => {
         try {
-            const response = await axios.get(API_BASE_URL);
+            const response = await axiosInstance.get('/entities');
             return response.data;
         } catch (error) {
             console.error('Error fetching all entities:', error);
@@ -29,7 +26,7 @@ const entityService = {
     // Fetch entities for a specific client
     getByClientId: async (clientId: any)  => {
         try {
-        const response = await axios.get(`${API_BASE_URL}/client/${clientId}/list`);
+        const response = await axiosInstance.get(`/entities/client/${clientId}/list`);
         console.log(`Response for client ${clientId}:`, response.data);
 
         return response.data;
@@ -42,7 +39,7 @@ const entityService = {
     // Fetch a specific entity by ID
     getById: async (entityId: any) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/${entityId}`);
+            const response = await axiosInstance.get(`/entities/${entityId}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching entity with ID ${entityId}:`, error);
@@ -53,7 +50,7 @@ const entityService = {
     // Create a new entity
     createEntity: async (entityData: any) => {
         try {
-            const response = await axios.post(API_BASE_URL, entityData);
+            const response = await axiosInstance.post('/entities', entityData);
             return response.data;
         } catch (error) {
             console.error('Error creating entity:', error);
@@ -64,7 +61,7 @@ const entityService = {
     // Update an existing entity
     updateEntity: async (entityId: any, entityData: any) => {
         try {
-            const response = await axios.put(`${API_BASE_URL}/${entityId}`, entityData);
+            const response = await axiosInstance.put(`/entities/${entityId}`, entityData);
             return response.data;
         } catch (error) {
             console.error(`Error updating entity with ID ${entityId}:`, error);
@@ -75,7 +72,7 @@ const entityService = {
     // Delete an entity
     deleteEntity: async (entityId: any) => {
         try {
-            const response = await axios.delete(`${API_BASE_URL}/${entityId}`);
+            const response = await axiosInstance.delete(`/entities/${entityId}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting entity with ID ${entityId}:`, error);

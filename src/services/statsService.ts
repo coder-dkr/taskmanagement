@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import axiosInstance from '@/lib/axios';
 
 export const getClientsCount = async () => {
   try {
-    const response = await axios.get(`${API_URL}/clients/count`);
+    const response = await axiosInstance.get('/clients/count');
     return response.data;
   } catch (error) {
     console.error("Error fetching clients count:", error);
@@ -14,7 +12,7 @@ export const getClientsCount = async () => {
 
 export const getEntitiesCount = async () => {
   try {
-    const response = await axios.get(`${API_URL}/entities/count`);
+    const response = await axiosInstance.get('/entities/count');
     return response.data;
   } catch (error) {
     console.error("Error fetching entities count:", error);
@@ -24,7 +22,7 @@ export const getEntitiesCount = async () => {
 
 export const getTasksCount = async () => {
   try {
-    const response = await axios.get(`${API_URL}/tasks/count`);
+    const response = await axiosInstance.get('/tasks/count');
     return response.data;
   } catch (error) {
     console.error("Error fetching tasks count:", error);
