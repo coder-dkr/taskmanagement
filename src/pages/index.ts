@@ -6,6 +6,6 @@ import MondayView from "./monday-view";
 import NotFound from "./not-found";
 import Tasks from "./tasks";
 import provisions from "./provisions";
+import CompletedTasks from "./completed-tasks";  
 
-
-export {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions}
+export {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions, CompletedTasks}  

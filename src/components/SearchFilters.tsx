@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "../components/ui/input";
+import { useTaskStatuses } from "../hooks/useTaskStatuses";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 
 export function SearchFilters() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const { statuses, loading, formatStatusLabel } = useTaskStatuses();
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -25,11 +27,17 @@ export function SearchFilters() {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="done">Done</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="overdue">Overdue</SelectItem>
+          {loading ? (
+            <SelectItem value="" disabled>Loading...</SelectItem>
+          ) : (
+            statuses.map((statusValue) => (
+              <SelectItem key={statusValue} value={statusValue}>
+                {formatStatusLabel(statusValue)}
+              </SelectItem>
+            ))
+          )}
         </SelectContent>
-      </Select>
-    </div>
-  );
-}
+        </Select>
+      </div>
+    );
+  }

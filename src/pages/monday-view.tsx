@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "@/hooks/useToast";
+import { useTaskCommentUpdate } from "@/hooks/useTaskCommentUpdate";
+
 import {
   ChevronDown,
   Plus,
@@ -26,6 +28,8 @@ import {RotateCcw} from 'lucide-react'
 import StatusDropdown from "@/components/StatusDropdown";
 import { TaskTemplateButton } from "@/components/ui/task-template-button";
 import useMondayData from "@/hooks/useMondayData";
+import { useTaskStatuses } from "@/hooks/useTaskStatuses";
+
 
 const MondayStyleDashboard = () => {
   const [clients, setClients] = useState([]);
@@ -61,6 +65,9 @@ const MondayStyleDashboard = () => {
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [isProvision, setIsProvision] = useState(false);
+  const { statuses, loading: statusesLoading, formatStatusLabel } = useTaskStatuses();
+  const { updateTaskComment } = useTaskCommentUpdate(setTasksMap);
+
 
   const {
     clientsPreload,
@@ -234,25 +241,7 @@ const MondayStyleDashboard = () => {
       }
     }
   };
-  const handleUpdateTaskComment = async (task, comment) => {
-    try {
-      await taskService.updateTask(task.id, {
-        ...task,
-        comment: comment,
-      });
-      
-      toast ({
-        title : "error",
-        description : "Comment updated successfully"
-      })
-    } catch (error) {
-      
-      toast ({
-        title : "error",
-        description : "Failed to update comment"
-      })
-    }
-  };
+ 
 
   const handleTaskStatusChange = async (entityId, taskId, newStatus) => {
     try {
@@ -504,9 +493,8 @@ const MondayStyleDashboard = () => {
 
       // Get tasks for selected manager
       const tasksForManager = await taskService.getTasksByManager(managerId);
-      console.log("Tasks for manager:", tasksForManager);
-
-      // Get all clients for reference
+      
+          // Get all clients for reference
       const allClients = await clientService.getAllClients();
 
       // Create maps for filtered data
@@ -616,14 +604,14 @@ const MondayStyleDashboard = () => {
   };
 
 
-
-  const handleResetFilters = () => {
-    setDateRange({ startDate: "", endDate: ""})
-    setSelectedStatus("")
-    setSearchTerm("")
-
-  }
-
+    const handleResetFilters = () => {
+      setDateRange({ startDate: "", endDate: "" });
+      setSelectedStatus("");
+      setSelectedManager(""); 
+      setSearchTerm("");
+      loadInitialDataInMonday();
+    }
+    
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
     <div className=" mx-auto">
@@ -690,7 +678,7 @@ const MondayStyleDashboard = () => {
           <select
             className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
             value={selectedManager}
-            onChange={(e) => setSelectedManager(e.target.value)}
+            onChange={(e) => filterByManager(e.target.value)}
           >
             <option value="">All Managers</option>
             {managers.map((manager) => (
@@ -702,13 +690,15 @@ const MondayStyleDashboard = () => {
           <select
             className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none"
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
+            onChange={(e) => filterByStatus(e.target.value)}
+            disabled={statusesLoading}
           >
             <option value="">All Statuses</option>
-            <option value="OVERDUE">Overdue</option>
-            <option value="PENDING">Pending</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="COMPLETED">Completed</option>
+            {statuses.map((status) => (
+              <option key={status} value={status}>
+              {formatStatusLabel(status)}
+              </option>
+            ))}
           </select>
         </div>
         </div>
@@ -716,11 +706,12 @@ const MondayStyleDashboard = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+          <div className="overflow-x-auto max-h-[70vh] overflow-y-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
             <tr className="w-full">
-         
+              <th className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white"></th>
               <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Name</th>
               <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Manager in Charge</th>
               <th className="px-4 py-2 text-left dark:bg-gray-600 text-black dark:text-white">Due Date</th>
@@ -735,6 +726,7 @@ const MondayStyleDashboard = () => {
                   <div className="flex justify-center items-center">
                     <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   </div>
+                  
                 </td>
               </tr>
             ) : (
@@ -827,7 +819,9 @@ const MondayStyleDashboard = () => {
                         </tr>
 
                         {expandedEntities[entity.id] &&
-                          tasksMap[entity.id]?.map((task) => (
+                          tasksMap[entity.id]?.map((task) => {
+                            console.log('Task data:', task);
+                            return(
                             <tr
                               key={task.id}
                               className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-600 text-black dark:text-white"
@@ -835,9 +829,17 @@ const MondayStyleDashboard = () => {
                               <td className="px-4 py-2 pl-16"></td>
                               <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">{task.name}</td>
                               <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
-                                {task.assignedManagerFirstName}{' '}
-                                {task.assignedManagerLastName}
-                              </td>
+                                <div>
+                                  <div className="font-medium">
+                                    {task.assignedManagerFirstName} {task.assignedManagerLastName}
+                                  </div>
+                                  {task.seniorManagerFirstName && (
+                                    <div className="text-sm text-gray-500">
+                                      Reports to: {task.seniorManagerFirstName} {task.seniorManagerLastName}
+                                    </div>
+                                  )}
+                              </div>
+                            </td>
                               <td className="px-4 py-2 dark:bg-gray-600 text-black dark:text-white">
                                 <input
                                   type="date"
@@ -932,14 +934,16 @@ const MondayStyleDashboard = () => {
                                 </div>
                               </td>
                             </tr>
-                          ))}
+                         );
+                        })}
                       </React.Fragment>
                     ))}
                 </React.Fragment>
-              ))
-            )}
+                  ))
+                )}
           </tbody>
         </table>
+        </div> 
       </div>
 
       {/* Date Filter Modal */}
@@ -1433,7 +1437,7 @@ const MondayStyleDashboard = () => {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleUpdateTaskComment(activeTask, comment);
+                updateTaskComment(activeTask, comment);
                 setIsCommentModalOpen(false);
               }}
             >

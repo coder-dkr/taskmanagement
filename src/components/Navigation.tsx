@@ -1,4 +1,4 @@
-import { Users, Building2, UserCog, CheckSquare, LayoutDashboard, FileText, Home } from "lucide-react";
+import { Users, Building2, UserCog, CheckSquare, LayoutDashboard, FileText, Home,CheckCircle  } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Link, useLocation } from "wouter";
 
@@ -7,11 +7,13 @@ export function Navigation() {
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
+    { icon: LayoutDashboard, label: "Task-management", path: "/monday-view" },
+    { icon: CheckSquare, label: "Tasks", path: "/tasks" },
+    { icon:CheckCircle, label: "Completed Tasks", path: "/completed-tasks"},
     { icon: Users, label: "Clients", path: "/clients" },
     { icon: Building2, label: "Entities", path: "/entities" },
     { icon: UserCog, label: "Managers", path: "/managers" },
-    { icon: CheckSquare, label: "Tasks", path: "/tasks" },
-    { icon: LayoutDashboard, label: "Monday View", path: "/monday-view" },
+    
     { icon: FileText, label: "Provisions", path: "/provisions" }
   ];
 

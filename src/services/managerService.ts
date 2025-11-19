@@ -1,4 +1,6 @@
-const BASE_URL = '/api/managers';
+const API_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = `${API_URL}/api/managers`;
+
 
 const managerService = {
     getAllManagers: async () => {

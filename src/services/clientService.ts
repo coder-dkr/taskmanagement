@@ -1,112 +1,85 @@
-import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/clients';
+const API_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = `${API_URL}/api/clients`;
+
+console.log('🔍 Full API_BASE_URL:', BASE_URL);
+
+
 
 export const clientService = {
-    getByFilters: async (page: number, searchText = '') => {
-        console.log('Making request with params:', { page, searchText });
+    getByFilters: async (page: number, searchText = '', sector = '') => {
+        console.log('Making request with params:', { page, searchText, sector });
         try {
-            const response = await axios.get(`${API_URL}/filter`, {
-                params: { 
-                    page, 
-                    searchText 
-                }
+            const queryParams = new URLSearchParams({
+                page: page.toString(),
+                searchText,
+                sector
             });
-            console.log('Response:', response.data);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.code === 'ERR_NETWORK') {
-                    console.error('Network error - Is the backend running?');
-                }
-                console.error('Error details:', {
-                    status: error.response?.status,
-                    data: error.response?.data,
-                    headers: error.response?.headers
-                });
+            
+            const url = `${BASE_URL}/filter?${queryParams}`;
+            console.log('🌐 Request URL:', url);
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch clients');
             }
+            const data = await response.json();
+            console.log('Response:', data);
+            return data;
+        } catch (error) {
+            console.error('Error fetching clients:', error);
             throw error;
         }
     },
 
-    // Get all clients with their associated entities
     getClientsWithEntities: async () => {
-        try {
-            const response = await axios.get(`${API_URL}/with-entities`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching clients with entities:', error);
-            throw error;
-        }
+        const response = await fetch(`${BASE_URL}/with-entities`);
+        if (!response.ok) throw new Error('Failed to fetch clients with entities');
+        return await response.json();
     },
 
-    // Get client by ID
-    getClientById: async (id : any) => {
-        try {
-            const response = await axios.get(`${API_URL}/${id}`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching client with ID ${id}:`, error);
-            throw error;
-        }
+    getClientById: async (id: any) => {
+        const response = await fetch(`${BASE_URL}/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch client by ID');
+        return await response.json();
     },
 
-    // Get all clients
     getAllClients: async () => {
-        try {
-            const response = await axios.get(API_URL);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching all clients:', error);
-            throw error;
-        }
+        const response = await fetch(BASE_URL);
+        if (!response.ok) throw new Error('Failed to fetch all clients');
+        return await response.json();
     },
 
-    // Create a new client
-    createClient: async (clientData : any) => {
-        try {
-            const response = await axios.post(API_URL, clientData, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Error creating client:', error);
-            throw error;
-        }
+    createClient: async (clientData: any) => {
+        const response = await fetch(BASE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(clientData),
+        });
+        if (!response.ok) throw new Error('Failed to create client');
+        return await response.json();
     },
 
-    // Update an existing client by ID
-    updateClient: async (id : any, clientData : any) => {
-        try {
-            const response = await axios.put(`${API_URL}/${id}`, clientData, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-            return response.data;
-        } catch (error) {
-            console.error(`Error updating client with ID ${id}:`, error);
-            throw error;
-        }
+    updateClient: async (id: any, clientData: any) => {
+        const response = await fetch(`${BASE_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(clientData),
+        });
+        if (!response.ok) throw new Error('Failed to update client');
+        return await response.json();
     },
 
-    // Delete a client by ID
-    deleteClient: async (id : any) => {
-        try {
-            await axios.delete(`${API_URL}/${id}`);
-        } catch (error) {
-            console.error(`Error deleting client with ID ${id}:`, error);
-            const errorMessage = (error as any)?.response?.data?.message || 'Failed to delete client.';
-            throw new Error(errorMessage);
-        }
+    deleteClient: async (id: any) => {
+        const response = await fetch(`${BASE_URL}/${id}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Failed to delete client');
     },
 
-    // Get the list of sectors
     getSectors: async () => {
-        try {
-            const response = await axios.get(`${API_URL}/sectors`);
-            return response.data; // Expecting an array of sector strings from the backend
-        } catch (error) {
-            console.error('Error fetching sectors:', error);
-            throw error;
-        }
+        const response = await fetch(`${BASE_URL}/sectors`);
+        if (!response.ok) throw new Error('Failed to fetch sectors');
+        return await response.json();
     },
 };

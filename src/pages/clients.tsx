@@ -22,6 +22,7 @@ const ClientList = () => {
     });
     const [currentClient, setCurrentClient] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedSector, setSelectedSector] = useState(''); // New state for sector filter
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [emailError, setEmailError] = useState('');
@@ -29,10 +30,10 @@ const ClientList = () => {
     const [location,navigate] = useLocation();
 
     const debouncedLoadClients = useCallback(
-        debounce(async (query, page) => {
+        debounce(async (query, page, sector) => {
             try {
                 setLoading(true);
-                const data = await clientService.getByFilters(page, query);
+                const data = await clientService.getByFilters(page, query, sector);
                 setClients(data.clients);
                 setTotalPages(data.totalPages);
                 setCurrentPage((current) => Math.max(1, Math.min(current, data.totalPages)));
@@ -46,8 +47,8 @@ const ClientList = () => {
     );
 
     useEffect(() => {
-        debouncedLoadClients(searchQuery, currentPage);
-    }, [searchQuery, currentPage, debouncedLoadClients]);
+        debouncedLoadClients(searchQuery, currentPage, selectedSector);
+    }, [searchQuery, currentPage, selectedSector, debouncedLoadClients]);
 
     useEffect(() => {
         const fetchSectors = async () => {
@@ -62,11 +63,19 @@ const ClientList = () => {
     }, []);
 
     useEffect(() => {
-        const filtered = clients.filter((client) =>
+        let filtered = clients.filter((client) =>
             client.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
+
+        // Apply sector filter if selected
+        if (selectedSector) {
+            filtered = filtered.filter((client) =>
+                client.sector === selectedSector
+            );
+        }
+
         setFilteredClients(filtered);
-    }, [clients, searchQuery]);
+    }, [clients, searchQuery, selectedSector]);
 
     const handleBack = () => {
         navigate('/');
@@ -86,7 +95,7 @@ const ClientList = () => {
             setCurrentClient(null);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
-            debouncedLoadClients(searchQuery, currentPage);
+            debouncedLoadClients(searchQuery, currentPage, selectedSector);
         } catch (error) {
             if (error.message.includes('DUPLICATE_EMAIL')) {
                 setEmailError('This email address is already in use');
@@ -98,6 +107,17 @@ const ClientList = () => {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const handleSectorFilter = (e) => {
+        setSelectedSector(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const clearFilters = () => {
+        setSearchQuery('');
+        setSelectedSector('');
         setCurrentPage(1);
     };
 
@@ -116,17 +136,53 @@ const ClientList = () => {
     <h1 className="text-xl font-semibold dark:text-white text-black">Clients</h1>
     <ExportButton onClick={exportClientsList} />
 </div>
-    <button
-            onClick={() => {
-                setCurrentClient(null);
-                setNewClient({ name: '', sector: '', email: '' });
-                setEmailError('');
-                setShowModal(true);
-            }}
-            className="add-client-btn mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
-        >
-            Add Client
-        </button>
+
+    {/* Action Row with Add Client and Sector Filter */}
+    <div className="action-row flex items-center justify-between mt-2 mb-4 gap-4">
+        <div className="flex items-center gap-4">
+            <button
+                onClick={() => {
+                    setCurrentClient(null);
+                    setNewClient({ name: '', sector: '', email: '' });
+                    setEmailError('');
+                    setShowModal(true);
+                }}
+                className="add-client-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+            >
+                Add Client
+            </button>
+
+            {/* Sector Filter Dropdown */}
+            <div className="sector-filter flex items-center gap-2">
+                <label htmlFor="sector-filter" className="text-sm font-medium dark:text-white text-black whitespace-nowrap">
+                    Filter by Sector:
+                </label>
+                <select
+                    id="sector-filter"
+                    value={selectedSector}
+                    onChange={handleSectorFilter}
+                    className="border border-gray-300 rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black min-w-[150px]"
+                >
+                    <option value="">All Sectors</option>
+                    {sectors.map((sector) => (
+                        <option key={sector} value={sector}>
+                            {sector.replace('_', ' ')}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+
+        {/* Clear Filters Button */}
+        {(searchQuery || selectedSector) && (
+            <button
+                onClick={clearFilters}
+                className="clear-filters-btn bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-sm"
+            >
+                Clear Filters
+            </button>
+        )}
+    </div>
 
     {/* Search Input */}
     <input
@@ -134,8 +190,27 @@ const ClientList = () => {
         placeholder="Search Clients..."
         value={searchQuery}
         onChange={handleSearch}
-        className="search-input w-full p-2 border border-gray-300 rounded mt-4 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
+        className="search-input w-full p-2 border border-gray-300 rounded mb-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
     />
+
+    {/* Active Filters Display */}
+    {(searchQuery || selectedSector) && (
+        <div className="active-filters mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 text-sm">
+                <span className="font-medium dark:text-white text-black">Active filters:</span>
+                {searchQuery && (
+                    <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                        Search: "{searchQuery}"
+                    </span>
+                )}
+                {selectedSector && (
+                    <span className="bg-purple-500 text-white px-2 py-1 rounded text-xs">
+                        Sector: {selectedSector.replace('_', ' ')}
+                    </span>
+                )}
+            </div>
+        </div>
+    )}
 
     {/* Pagination */}
     <div className="pagination flex justify-center items-center space-x-4 my-4">
@@ -199,7 +274,7 @@ const ClientList = () => {
                                         onClick={async () => {
                                             if (window.confirm('Are you sure you want to delete this client?')) {
                                                 await clientService.deleteClient(client.id);
-                                                debouncedLoadClients(searchQuery, currentPage);
+                                                debouncedLoadClients(searchQuery, currentPage, selectedSector);
                                             }
                                         }}
                                         className="btn btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
@@ -214,7 +289,10 @@ const ClientList = () => {
             </table>
         ) : (
             <div className="no-results text-center text-gray-700 dark:text-gray-300">
-                No clients found matching "{searchQuery}"
+                {searchQuery || selectedSector 
+                    ? `No clients found matching the current filters`
+                    : 'No clients found'
+                }
             </div>
         )}
     </div>

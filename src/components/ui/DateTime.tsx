@@ -5,8 +5,7 @@ interface AnalogClockProps {
   timezone: string;
   city: string;
 }
-
-const AnalogClock: React.FC<AnalogClockProps> = ({ timezone, city }) => {
+const DigitalClock: React.FC<AnalogClockProps> = ({ timezone, city }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -16,71 +15,23 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ timezone, city }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const getRotation = () => {
-    const localTime = new Date(time.toLocaleString('en-US', { timeZone: timezone }));
-    const hours = localTime.getHours() % 12;
-    const minutes = localTime.getMinutes();
-    const seconds = localTime.getSeconds();
-
-    return {
-      hours: (hours * 30) + (minutes / 2),
-      minutes: minutes * 6,
-      seconds: seconds * 6
-    };
+  const getDigitalTime = () => {
+    return time.toLocaleString('en-US', { 
+      timeZone: timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
-  const rotation = getRotation();
-
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-lg font-medium mb-2">{city}</h2>
-      <div className="relative w-24 h-24">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="2" />
-          
-          {[...Array(12)].map((_, i) => (
-            <line
-              key={i}
-              x1="50"
-              y1="10"
-              x2="50"
-              y2="15"
-              transform={`rotate(${i * 30} 50 50)`}
-              stroke="rgba(0,0,0,0.5)"
-              strokeWidth="2"
-            />
-          ))}
-
-          <line
-            x1="50"
-            y1="50"
-            x2="50"
-            y2="25"
-            transform={`rotate(${rotation.hours} 50 50)`}
-            stroke="black"
-            strokeWidth="2"
-          />
-          <line
-            x1="50"
-            y1="50"
-            x2="50"
-            y2="20"
-            transform={`rotate(${rotation.minutes} 50 50)`}
-            stroke="black"
-            strokeWidth="1.5"
-          />
-          <line
-            x1="50"
-            y1="50"
-            x2="50"
-            y2="15"
-            transform={`rotate(${rotation.seconds} 50 50)`}
-            stroke="#ff6b6b"
-            strokeWidth="1"
-          />
-          
-          <circle cx="50" cy="50" r="2" fill="black" />
-        </svg>
+    <div className="relative p-6 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-xl border border-slate-700/50 min-w-[200px] group hover:scale-105 transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative z-10">
+        <h2 className="text-sm font-medium mb-3 text-slate-400 uppercase tracking-wider">{city}</h2>
+        <div className="text-4xl font-mono font-bold text-white tracking-tight">
+          {getDigitalTime()}
+        </div>
       </div>
     </div>
   );
@@ -122,17 +73,17 @@ export const DateTime = () => {
   const { days, firstDay, today } = getCalendarDays();
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm">
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-full">
       <div className="text-center mb-4">
-        <div className="flex justify-center items-start space-x-8 mb-6">
+        <div className="flex justify-center items-start space-x-6 mb-8">
           <div className="text-left">
-            <AnalogClock timezone="Asia/Jerusalem" city="Israel" />
+            <DigitalClock timezone="Asia/Jerusalem" city="Israel" />
           </div>
           <div className="text-left">
-            <AnalogClock timezone="America/New_York" city="United States" />
+            <DigitalClock timezone="America/New_York" city="New York" />
           </div>
           <div className="text-left">
-            <AnalogClock timezone="Asia/Kolkata" city="India" />
+            <DigitalClock timezone="Asia/Kolkata" city="India" />
           </div>
         </div>
         <p className="text-xl text-gray-600 mt-8">{formatDate(date)}</p>

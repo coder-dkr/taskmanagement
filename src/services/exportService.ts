@@ -1,9 +1,10 @@
-
 import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const exportClientsList = async (): Promise<void> => {
   try {
-    const response = await axios.get("/api/clients/export", {
+    const response = await axios.get(`${API_URL}/clients/export`, {
       responseType: "blob"
     });
     const url = window.URL.createObjectURL(new Blob([response.data]));

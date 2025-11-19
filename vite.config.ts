@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
 export default defineConfig({
   plugins: [react(), themePlugin()],
   resolve: {
@@ -20,9 +21,14 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
-      '/api' : 'http://localhost:8080'
-}
-
+      '/api': {
+        target: 'http://10.120.190.19:9000',
+        changeOrigin: true,
+        rewrite: (path) => path
+      }
+    }
   },
 });

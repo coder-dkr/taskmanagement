@@ -6,14 +6,19 @@ import { Button } from "./ui/button";
 import { TaskRow } from "./TaskRow";
 import type { Client, Entity, Task } from "../shared/schema";
 
-
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function HierarchicalView() {
   const [expandedClients, setExpandedClients] = useState<number[]>([]);
   const [expandedEntities, setExpandedEntities] = useState<number[]>([]);
 
   const { data: clients = [] } = useQuery<Client[]>({
-    queryKey: ['/api/clients']
+    queryKey: ["clients"],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/clients`);
+      if (!res.ok) throw new Error("Failed to fetch clients");
+      return res.json();
+    }
   });
 
   const toggleClient = (clientId: number) => {
@@ -74,7 +79,12 @@ function EntityList({
   onToggleEntity: (entityId: number) => void;
 }) {
   const { data: entities = [] } = useQuery<Entity[]>({
-    queryKey: ['/api/clients', clientId, 'entities']
+    queryKey: ["entities", clientId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/clients/${clientId}/entities`);
+      if (!res.ok) throw new Error("Failed to fetch entities");
+      return res.json();
+    }
   });
 
   return (
@@ -105,7 +115,12 @@ function EntityList({
 
 function TaskList({ entityId }: { entityId: number }) {
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/entities', entityId, 'tasks']
+    queryKey: ["tasks", entityId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/entities/${entityId}/tasks`);
+      if (!res.ok) throw new Error("Failed to fetch tasks");
+      return res.json();
+    }
   });
 
   return (

@@ -6,7 +6,7 @@ import { Navigation } from "@/components/Navigation";
 import { TopBar } from "@/components/TopBar";
 import Joyride from 'react-joyride';
 import { useOnboarding } from "@/hooks/useOnboarding";
-import {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions} from '@/pages'
+import {Dashboard , entities , Clients , managers , MondayView , NotFound , Tasks , provisions, CompletedTasks} from '@/pages'
 import { MondayDataProvider } from "./contexts/MondayDataContext";
 
 function Router() {
@@ -42,6 +42,7 @@ function Router() {
             <Route path="/managers" component={managers}/>
             <Route path="/tasks" component={Tasks}/>
             <Route path="/monday-view"  component={MondayView} />
+            <Route path="/completed-tasks" component={CompletedTasks} />  
             <Route path="/provisions" component={provisions} />
             <Route component={NotFound}/>
           </Switch>
